@@ -1,0 +1,321 @@
+/* Matrix identity: immersive code rain with live data streams.
+ * Respects prefers-reduced-motion. No layout impact. */
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    --matrix-column-width: 22px;
+    --matrix-font-size: 14px;
+    --matrix-line-height: 1.4;
+    --matrix-fade-duration: 2.5s;
+    --matrix-spawn-interval: 60ms;
+    --matrix-char-set: "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ$¥€£₿";
+  }
+
+  .matrix-rain {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0.08;
+  }
+
+  .matrix-rain canvas { display: block; width: 100%; height: 100%; }
+
+  /* Subtle ambient glow on brand mark */
+  .hq-brand-mark {
+    filter: drop-shadow(0 0 8px var(--hq-accent));
+    transition: filter var(--hq-duration-slow) var(--hq-ease);
+  }
+  .hq-brand-mark:hover { filter: drop-shadow(0 0 16px var(--hq-accent)) drop-shadow(0 0 32px var(--hq-accent-dim)); }
+
+  /* Shell bar accent pulse */
+  .hq-shell-bar::after {
+    animation: matrix-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes matrix-pulse {
+    0%, 100% { opacity: 0.6; width: 68px; }
+    50% { opacity: 1; width: 96px; }
+  }
+
+  /* Nav background subtle scanline */
+  .hq-shell-nav::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(77, 255, 136, 0.015) 2px,
+      rgba(77, 255, 136, 0.015) 4px
+    );
+    pointer-events: none;
+    animation: scanline-drift 8s linear infinite;
+  }
+
+  @keyframes scanline-drift {
+    0% { background-position-y: 0; }
+    100% { background-position-y: 8px; }
+  }
+
+  /* KPI grid subtle shimmer */
+  .hq-kpi-grid > div::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(77, 255, 136, 0.02), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 4s ease-in-out infinite;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  .hq-kpi-grid > div:nth-child(2)::before { animation-delay: 0.5s; }
+  .hq-kpi-grid > div:nth-child(3)::before { animation-delay: 1s; }
+  .hq-kpi-grid > div:nth-child(4)::before { animation-delay: 1.5s; }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* Panel hover ambient glow */
+  .panel:hover, .data-panel:hover {
+    box-shadow: 0 0 24px rgba(77, 255, 136, 0.06), var(--hq-panel-shadow, none);
+    transition: box-shadow var(--hq-duration-slow) var(--hq-ease);
+  }
+
+  /* Chart canvas subtle grid pulse */
+  .chart-wrap canvas {
+    animation: chart-grid-breathe 6s ease-in-out infinite;
+  }
+
+  @keyframes chart-grid-breathe {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.02); }
+  }
+
+  /* Status pills subtle glow */
+  .hq-pill.ok, .hq-badge.ok, .hq-pill.connected, .hq-badge.positive {
+    animation: status-glow 2.5s ease-in-out infinite;
+  }
+
+  @keyframes status-glow {
+    0%, 100% { box-shadow: 0 0 0 rgba(77, 255, 136, 0); }
+    50% { box-shadow: 0 0 12px rgba(77, 255, 136, 0.35); }
+  }
+
+  .hq-pill.warn, .hq-badge.warn, .hq-pill.stale, .hq-badge.warning {
+    animation: warn-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes warn-glow {
+    0%, 100% { box-shadow: 0 0 0 rgba(255, 203, 105, 0); }
+    50% { box-shadow: 0 0 12px rgba(255, 203, 105, 0.35); }
+  }
+
+  .hq-pill.bad, .hq-badge.bad, .hq-pill.halted, .hq-badge.negative, .hq-pill.degraded {
+    animation: danger-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes danger-glow {
+    0%, 100% { box-shadow: 0 0 0 rgba(255, 115, 135, 0); }
+    50% { box-shadow: 0 0 12px rgba(255, 115, 135, 0.4); }
+  }
+
+  /* Footer Saturn mark subtle rotation */
+  .workspace-footer::before {
+    content: "◈";
+    display: inline-block;
+    margin-right: 8px;
+    animation: saturn-spin 20s linear infinite;
+    color: var(--hq-accent);
+    opacity: 0.7;
+  }
+
+  @keyframes saturn-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Scrollbar track subtle matrix chars */
+  *::-webkit-scrollbar-track {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ctext x='2' y='14' font-size='10' fill='%23263b30'%3E0%3C/text%3E%3Ctext x='10' y='14' font-size='10' fill='%23263b30'%3E1%3C/text%3E%3C/svg%3E");
+  }
+
+  /* Focus ring matrix tint */
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+    box-shadow: 0 0 0 2px var(--hq-focus), 0 0 8px var(--hq-accent);
+  }
+}
+
+/* Reduced motion: disable all decorative animations */
+@media (prefers-reduced-motion: reduce) {
+  .matrix-rain { display: none !important; }
+  .hq-shell-bar::after,
+  .hq-shell-nav::before,
+  .hq-kpi-grid > div::before,
+  .chart-wrap canvas,
+  .hq-pill, .hq-badge,
+  .workspace-footer::before { animation: none !important; }
+  .panel:hover, .data-panel:hover { box-shadow: var(--hq-panel-shadow, none) !important; }
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+    box-shadow: 0 0 0 2px var(--hq-focus) !important;
+  }
+}
+
+/* ── Matrix Terminal Overlay Layer ── */
+.matrix-terminal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* HUD Top Bar */
+.mt-hud-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 48px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  border-bottom: 1px solid rgba(0,255,65,0.15);
+  pointer-events: auto;
+}
+
+.mt-logo {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: 18px;
+  color: #00ff41;
+  text-shadow: 0 0 12px #00ff41;
+}
+
+.mt-status {
+  display: flex;
+  gap: 28px;
+  color: #00ff41;
+}
+
+.mt-status span {
+  opacity: 0.9;
+}
+
+.mt-live-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: #00ff41;
+  border-radius: 50%;
+  margin-right: 6px;
+  box-shadow: 0 0 8px #00ff41;
+  animation: mt-pulse 1.2s infinite;
+}
+
+@keyframes mt-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.mt-protocol {
+  text-shadow: 0 0 8px rgba(0,255,65,0.4);
+}
+
+/* Floating Sector Heatmap */
+.mt-sector-heatmap {
+  position: absolute;
+  top: 70px;
+  right: 30px;
+  width: 340px;
+  background: rgba(0,0,0,0.7);
+  border: 1px solid rgba(0,255,65,0.25);
+  border-radius: 6px;
+  padding: 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 30px rgba(0,255,65,0.08);
+  pointer-events: auto;
+}
+
+.mt-sector-heatmap h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: #00ff41;
+  margin-bottom: 10px;
+  text-shadow: 0 0 8px #00ff41;
+}
+
+.mt-heat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.mt-heat-tile {
+  height: 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  border-radius: 3px;
+  transition: all 0.3s;
+}
+
+.mt-heat-tile.up {
+  background: linear-gradient(135deg, #003d1a, #00ff41);
+  color: #000;
+  box-shadow: 0 0 12px rgba(0,255,65,0.4);
+}
+
+.mt-heat-tile.down {
+  background: linear-gradient(135deg, #3d0000, #ff003c);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(255,0,60,0.4);
+}
+
+.mt-heat-tile span {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+/* Ticker Ribbons */
+.mt-ticker-ribbon {
+  position: absolute;
+  left: 0; right: 0;
+  height: 24px;
+  overflow: hidden;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  color: #00ff41;
+  opacity: 0.9;
+  pointer-events: auto;
+}
+
+.mt-ribbon-top { top: 56px; border-bottom: 1px solid rgba(0,255,65,0.1); }
+.mt-ribbon-bottom { bottom: 0; border-top: 1px solid rgba(0,255,65,0.1); }
+
+.mt-ticker-tape {
+  white-space: nowrap;
+  animation: mt-scroll 40s linear infinite;
+}
+
+@keyframes mt-scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+/* Reduced motion for overlay */
+@media (prefers-reduced-motion: reduce) {
+  .mt-hud-top::after,
+  .mt-sector-heatmap,
+  .mt-ticker-ribbon { animation: none !important; }
+  .matrix-terminal { display: none !important; }
+}
+

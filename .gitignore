@@ -1,0 +1,30 @@
+# Cloudroom local credentials and research artifacts (never commit)
+.env.cloudroom
+.cloudroom-state/
+
+# Data
+data/
+*.csv
+*.db
+*.json
+
+# Cache and temporary
+.cache/
+__pycache__/
+*.pyc
+.pytest_cache/
+.hermes/
+
+# Backups
+backups/
+agent-reports/
+
+# Logs
+*.log
+
+# Environment
+.env
+venv/
+.env.*
+*.lock
+nul

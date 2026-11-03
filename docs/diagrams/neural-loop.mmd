@@ -1,0 +1,24 @@
+sequenceDiagram
+    participant B as Existing MT5
+    participant C as Neural label collector
+    participant D as signals.db
+    participant E as Diagnostic evaluation
+    participant H as Cockpit
+    C->>B: guarded read of positions and deals
+    B-->>C: entry / partial or closed evidence
+    C->>D: labels and ticket mappings
+    Note over C,D: Missing SL basis or incomplete history defers labels
+    C->>D: count completed outcomes
+    alt complete count meets threshold and changed
+        C->>E: evaluate_collection_gate
+        E->>D: verify executed-trade provenance
+        alt verified count below threshold
+            E-->>C: CONTINUE with blocker
+        else diagnostic promotion
+            E-->>C: KEEP_SHADOW, consumer not wired
+        end
+        C->>C: persist neural_eval JSON atomically
+    end
+    H->>D: read count evidence
+    H->>H: expose /api/neural with diagnostic artifact
+    Note over E,H: No model activation or live-entry authorization

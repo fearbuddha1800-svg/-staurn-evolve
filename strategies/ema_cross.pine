@@ -1,0 +1,20 @@
+//@version=5
+strategy("EMA Cross Signals", overlay=true)
+
+fastLen = input.int(9, "Fast EMA")
+slowLen = input.int(21, "Slow EMA")
+
+fast = ta.ema(close, fastLen)
+slow = ta.ema(close, slowLen)
+
+longCond = ta.crossover(fast, slow)
+shortCond = ta.crossunder(fast, slow)
+
+if longCond
+    strategy.entry("Long", strategy.long)
+
+if shortCond
+    strategy.entry("Short", strategy.short)
+
+plot(fast, "Fast EMA", color.blue)
+plot(slow, "Slow EMA", color.red)

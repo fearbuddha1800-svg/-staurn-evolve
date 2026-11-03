@@ -1,0 +1,25 @@
+sequenceDiagram
+    participant T as Telegram
+    participant D as daemon/parser
+    participant E as executor
+    participant G as Entry guards
+    participant B as Existing MT5
+    participant L as Ledger/events
+    T->>D: permitted message
+    D->>D: parse, dedupe, HALT/PAUSE gate
+    alt blocked or invalid
+        D->>L: rejected/skipped evidence
+    else candidate
+        D->>E: execute candidate with identity
+        E->>G: evaluate risk and authority
+        alt unavailable or denied
+            G-->>E: deny with reason
+            E->>L: denial evidence, zero sends
+        else allowed
+            G-->>E: allow
+            E->>B: guarded order request
+            B-->>E: result / retcode / ticket
+            E->>L: actual result, not inferred fill
+        end
+    end
+    Note over B,L: Reconcile unknown outcomes before any replay

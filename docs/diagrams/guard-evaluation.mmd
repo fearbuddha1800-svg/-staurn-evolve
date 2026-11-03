@@ -1,0 +1,25 @@
+sequenceDiagram
+    participant S as Entry caller
+    participant E as executor
+    participant G as Entry / loss guards
+    participant B as Existing MT5
+    participant M as manager
+    participant P as stop_legality
+    S->>E: candidate intent
+    E->>G: account / limits / durable loss / entry checks
+    alt denied or missing evidence
+        G-->>E: reject and preserve latch
+    else allowed
+        G-->>E: structured allow
+        E->>B: guarded entry send
+        B-->>E: actual result
+    end
+    Note over E,M: Entry hold is not permission to bypass stop legality
+    M->>P: plan position stop with current evidence
+    alt illegal / stale / widens stop
+        P-->>M: reject with reason
+    else legal and tighten-only
+        P-->>M: allowed stop plan
+        M->>B: modify SL/TP
+        B-->>M: modification result
+    end

@@ -1,0 +1,39 @@
+# Signal Relay — Telegram → MT5
+
+Reads trading signals from selected Telegram chats on **your account**,
+parses them, executes on **MetaTrader 5** (whatever account is logged into
+the running terminal — currently MetaQuotes-Demo), and reports everything
+into your Hermes chat.
+
+## Files
+| file | role |
+|---|---|
+| `parser.py` | free-text signal → structured trade (symbol/side/entry/SL/TPs) |
+| `executor.py` | MT5 order placement with risk guard + ledger (`signals.db`) |
+| `manage.py` | break-even + trailing-stop engine (run alongside daemon) |
+| `notify.py` | pushes reports into the Hermes Telegram chat |
+| `daemon.py` | Telegram listener (Telethon, your account) — drives everything |
+| `config.json` | all knobs: channels, mode, risk limits, sizing, BE/trail |
+
+## First-time setup (needs api_id/api_hash once)
+1. Get credentials at https://my.telegram.org → API development tools.
+2. `python daemon.py --login` — stores the session (one-time).
+3. `python daemon.py --list-dialogs` — prints your chats + IDs.
+4. Put the signal-channel IDs into `config.json` → `"channels": [...]`.
+5. Start: `python daemon.py` (listener) and `python manage.py` (BE/trail).
+
+## Operating
+- **HALT** file next to daemon.py → blocks NEW trades instantly; relay keeps reporting. Delete to resume.
+- **STOP** file → stops daemon + manager.
+- All trades logged in `signals.db` (sqlite) — ask Hermes for a status/P-L report anytime.
+- Modes: `"mode": "auto"` executes immediately (risk-guarded); `"confirm"` posts parsed signal and waits for your approval in chat.
+
+## Risk guard (executor.py)
+- max lot per trade, max open positions, max trades/day, symbol allowlist,
+  duplicate-signal block (per message id), SL/TP validation (distance, side sanity),
+  free-margin floor. Sizing: risk-% of balance from SL distance (default 1%) or fixed lots.
+
+## Safety facts
+- Executes on the account logged into the running MT5 terminal — currently MetaQuotes-Demo login 5057394166 (USD, $100k demo; the account was switched Oct 14 — earlier it was 113783047).
+- MT5 auto-starts at Windows logon via `Startup/mt5-autostart.bat`.
+- Telegram leg only READS the chats you list; it never posts there.

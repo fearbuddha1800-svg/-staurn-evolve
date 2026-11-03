@@ -1,0 +1,22 @@
+# Quant HQ — Professional Trading Command Center
+# Python 3.10+
+
+# Core framework (stdlib only — no external runtime deps for the core stack)
+# All components run on Python standard library only:
+#   http.server, sqlite3, threading, json, urllib, pathlib, argparse, ctypes
+
+# Optional/bridge dependencies (install only if using those bridges):
+# - PyYAML          (gateway.py config loading)
+# - MetaTrader5     (MT5 attachment — requires MetaTrader 5 terminal installed)
+# - telethon        (daemon.py Telegram ingestion)
+# - pillow          (OCR/image processing)
+# - numpy           (quant analytics / neural features)
+
+PyYAML>=6.0
+MetaTrader5>=5.0.40
+telethon>=1.34.0
+Pillow>=10.0.0
+numpy>=1.24.0
+
+# Development / testing
+pytest>=7.0.0

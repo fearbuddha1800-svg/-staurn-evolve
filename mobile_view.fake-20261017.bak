@@ -1,0 +1,45 @@
+"""mobile_view.py — compact mobile phone mockup panel (Hermes Scalp, paper mode)."""
+
+
+def get_mobile_html() -> str:
+    """Return one compact HTML string of the mobile mockup panel; '' on any error."""
+    try:
+        return (
+            '<div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:13px;background:#f2f4f7;padding:12px">'
+            '<div style="width:375px;height:667px;background:#fff;border-radius:26px;box-shadow:0 10px 30px rgba(0,0,0,.12);overflow:hidden">'
+            '<div style="background:#0f172a;color:#fff;padding:14px 16px;font-weight:700;letter-spacing:.4px">HERMES SCALP Trading Dashboard \u2022 Paper Mode</div>'
+            '<div style="padding:10px 16px 6px"><span style="background:#e2e8f0;color:#475569;border-radius:10px;padding:2px 8px;font-size:11px">10:42</span></div>'
+            '<div style="padding:0 16px 12px">'
+            '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:10px">'
+            '<span style="background:#dbeafe;color:#1e40af;border-radius:6px;padding:1px 8px;font-size:11px;font-weight:600">New signal</span>'
+            '<div style="font-weight:700;margin-top:8px">EUR/USD Momentum</div>'
+            '<div style="color:#64748b;margin-top:4px">Buy \u2022 Long</div>'
+            '<div style="color:#64748b;font-size:12px;margin-top:4px">Source: FX Flow</div>'
+            '<button style="margin-top:10px;padding:6px 14px;border-radius:8px;border:1px solid #2563eb;background:#2563eb;color:#fff;font-size:12px;cursor:pointer">View details</button>'
+            '</div>'
+            '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:10px">'
+            '<div style="font-weight:700">GBPUSD - M5</div>'
+            '<div style="color:#64748b;font-size:12px;margin-top:4px">Session: Breakout</div>'
+            '<div style="color:#64748b;font-size:12px;margin-top:4px">Stop loss type: age (&gt;1 min)</div>'
+            '<div style="color:#64748b;font-size:12px;margin-top:4px">Reason: FX Flow</div>'
+            '<button style="margin-top:10px;padding:6px 14px;border-radius:8px;border:1px solid #2563eb;background:#2563eb;color:#fff;font-size:12px;cursor:pointer">View signal</button>'
+            '</div>'
+            '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px">'
+            '<div style="font-weight:700">USD500 - M5</div>'
+            '<div style="color:#64748b;font-size:12px;margin-top:4px">Status: Closed</div>'
+            '<div style="color:#16a34a;font-weight:700;margin-top:4px">P/L +0.4%</div>'
+            '<div style="color:#dc2626;font-size:12px;margin-top:4px">Risk: 1% threshold reached</div>'
+            '</div>'
+            '</div>'
+            '<div style="display:flex;justify-content:space-around;padding:10px 16px 16px;border-top:1px solid #e2e8f0;background:#fff">'
+            '<span style="color:#94a3b8;font-size:11px;border:1px solid #e2e8f0;border-radius:10px;padding:4px 10px">Status</span>'
+            '<span style="color:#94a3b8;font-size:11px;border:1px solid #e2e8f0;border-radius:10px;padding:4px 10px">Sources</span>'
+            '<span style="color:#94a3b8;font-size:11px;border:1px solid #e2e8f0;border-radius:10px;padding:4px 10px">Positions</span>'
+            '<span style="color:#94a3b8;font-size:11px;border:1px solid #e2e8f0;border-radius:10px;padding:4px 10px">Risk</span>'
+            '<span style="color:#fff;font-weight:700;font-size:11px;background:#2563eb;border-radius:10px;padding:4px 10px">Pause</span>'
+            '</div>'
+            '</div>'
+            '</div>'
+        )
+    except Exception:
+        return ''

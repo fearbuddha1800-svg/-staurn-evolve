@@ -1,0 +1,508 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+//@version=6
+indicator("GOLDEN EYE | Trend / Regime v0.1", "GE Trend v0.1", overlay = true, max_bars_back = 5000, calc_bars_count = 5000)
+
+// Independent mathematical reimplementation; provenance: QG-04/05/09/14/19. QG-26 uses its
+// atlas summary only: its original source was not included, so the zone geometry is provisional.
+const int DMI_N = 8
+const int ST_N = 9
+const float EPS = 0.000001
+const color BULL = #089981
+const color BEAR = #f23645
+const color NEUTRAL = #5b9cf6
+const color AMBER = #e6a700
+
+// --- Inputs ---
+string G_ENGINE = "Engine"
+string G_DMI = "Adaptive DMI"
+string G_MTF = "Confirmed MTF"
+string G_VIEW = "Display / export"
+preset = input.string("Intraday", "Preset", options = ["Scalp", "Intraday", "Swing"], group = G_ENGINE, tooltip = "Source-derived speed profiles; preset selection is not evidence of predictive performance.")
+recency = input.float(0.985, "Completed-phase reward decay", minval = 0.90, maxval = 0.999, step = 0.001, group = G_DMI, tooltip = "Recency decay for completed expert phases; no external training data is used.")
+softmaxSharpness = input.float(1.5, "Expert softmax sharpness", minval = 0.1, maxval = 5.0, step = 0.1, group = G_DMI, tooltip = "Controls concentration of the descriptive DMI expert weights; they are not probabilities.")
+mtf1Input = input.timeframe("15", "Context TF 1", group = G_MTF, tooltip = "Uses prior completed higher-timeframe Gaussian state.")
+mtf2Input = input.timeframe("60", "Context TF 2", group = G_MTF, tooltip = "Uses prior completed higher-timeframe Gaussian state.")
+mtf3Input = input.timeframe("240", "Context TF 3", group = G_MTF, tooltip = "Uses prior completed higher-timeframe Gaussian state.")
+mtf4Input = input.timeframe("D", "Context TF 4", group = G_MTF, tooltip = "Uses prior completed higher-timeframe Gaussian state.")
+showDashboard = input.bool(true, "Diagnostics table", group = G_VIEW, tooltip = "Shows inspectable features. Strength and disagreement are uncalibrated indices, not probabilities.")
+showBands = input.bool(true, "Adaptive Gaussian deadband", group = G_VIEW, tooltip = "Displays QG-19 adaptive Gaussian trend envelope.")
+showVortex = input.bool(false, "Atlas-derived QG-26 zones", group = G_VIEW, tooltip = "Provisional geometry from atlas parameters; not verified against the unavailable original source.")
+showTurns = input.bool(true, "Confirmed direction transitions", group = G_VIEW, tooltip = "Only marks confirmed chart-bar transitions.")
+exportJson = input.bool(false, "Emit confirmed-bar JSON", group = G_VIEW, tooltip = "Use an alert with Any alert() function call. The payload contains implemented features only.")
+colorblind = input.bool(false, "Colorblind-safe colors", group = G_VIEW, tooltip = "Uses blue/orange directional colors.")
+
+// --- Shared state object ---
+type TrendState
+    int direction
+    float strength
+    float consensus
+    float persistence
+    float acceleration
+    int regime
+    float disagreement
+    float gaussianLevel
+    float gaussianSlope
+    float gaussianCurvature
+    float displacementAtr
+    float er
+    float deadbandMultiplier
+    float dmiPlus
+    float dmiMinus
+    float adx
+    float effectiveHorizon
+    float horizonDispersion
+    float stBear
+    float stNeutral
+    float stBull
+    float stDispersion
+    float stSeparation
+    float vortexSlope
+    float vortexZone
+    float mtfAgreement
+var TrendState qg = TrendState.new(0, 0.0, 0.0, 0.0, 0.0, 0, 1.0, na, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+
+// --- Helpers ---
+f_clip(float x, float lo, float hi) => math.max(lo, math.min(hi, x))
+f_sign(float x, float deadband) => x > deadband ? 1 : x < -deadband ? -1 : 0
+f_regime(int x) => x == 1 ? "TREND" : x == 2 ? "RANGE" : x == 3 ? "VOL EXPANSION" : x == 4 ? "COMPRESSION" : "TRANSITION"
+f_dir(int x) => x > 0 ? "BULLISH" : x < 0 ? "BEARISH" : "NEUTRAL"
+f_dirColor(int x, bool cb) => x > 0 ? (cb ? color.rgb(0, 114, 178) : BULL) : x < 0 ? (cb ? color.rgb(230, 159, 0) : BEAR) : NEUTRAL
+
+// Higher-timeframe calculation returns the preceding HTF bar; lookahead_on then maps only
+// that completed value across the current lower-timeframe interval.
+f_mtfConfirmed() =>
+    int poles = preset == "Scalp" ? 2 : preset == "Swing" ? 4 : 3
+    int length = preset == "Scalp" ? 8 : preset == "Swing" ? 21 : 15
+    float beta = (1.0 - math.cos(2.0 * math.pi / length)) / (math.pow(1.414, 2.0 / poles) - 1.0)
+    float alpha = -beta + math.sqrt(beta * beta + 2.0 * beta)
+    var float a = na
+    var float b = na
+    var float c = na
+    var float d = na
+    a := alpha * close + (1.0 - alpha) * nz(a[1], close)
+    b := alpha * a + (1.0 - alpha) * nz(b[1], close)
+    c := alpha * b + (1.0 - alpha) * nz(c[1], close)
+    d := alpha * c + (1.0 - alpha) * nz(d[1], close)
+    float g = poles == 1 ? a : poles == 2 ? b : poles == 3 ? c : d
+    float reg = ta.linreg(g, preset == "Scalp" ? 12 : preset == "Swing" ? 34 : 22, 0)
+    [stLine, stDirection] = ta.supertrend(0.15, 21)
+    int slopeState = reg > reg[1] ? 1 : -1
+    int filterState = reg > stLine ? 1 : -1
+    int state = slopeState * filterState < 0 ? 0 : filterState
+    state[1]
+
+// --- Preset parameters ---
+int kernelLen = preset == "Scalp" ? 24 : preset == "Swing" ? 50 : 34
+float kernelSigma = kernelLen / 5.0
+int gaussLen = preset == "Scalp" ? 8 : preset == "Swing" ? 21 : 15
+int poles = preset == "Scalp" ? 2 : preset == "Swing" ? 4 : 3
+int regLen = preset == "Scalp" ? 12 : preset == "Swing" ? 34 : 22
+int erLen = preset == "Scalp" ? 7 : preset == "Swing" ? 18 : 10
+int erSmooth = preset == "Scalp" ? 3 : preset == "Swing" ? 8 : 5
+int persistLen = preset == "Scalp" ? 12 : preset == "Swing" ? 34 : 20
+
+// --- Shared normalized data ---
+float atr = ta.atr(14)
+float atrSafe = math.max(nz(atr, high - low), syminfo.mintick)
+float atrBase = ta.sma(atrSafe, 50)
+float volatilityRatio = atrSafe / math.max(nz(atrBase, atrSafe), syminfo.mintick)
+float trueRange = ta.tr(true)
+
+// --- QG-09 finite causal Gaussian kernel ---
+var array<float> weights = array.new_float()
+if barstate.isfirst
+    float totalWeight = 0.0
+    for i = 0 to kernelLen - 1
+        float z = (i - (kernelLen - 1) * 0.5) / kernelSigma
+        float w = math.exp(-0.5 * z * z)
+        weights.push(w)
+        totalWeight += w
+    for i = 0 to weights.size() - 1
+        weights.set(i, weights.get(i) / math.max(totalWeight, EPS))
+float finiteGaussian = na
+if bar_index >= kernelLen - 1
+    float acc = 0.0
+    for i = 0 to kernelLen - 1
+        acc += close[i] * weights.get(i)
+    finiteGaussian := acc
+float finiteSlope = (finiteGaussian - finiteGaussian[3]) / (atrSafe * 3.0)
+float finiteCurvature = (finiteGaussian - 2.0 * finiteGaussian[1] + finiteGaussian[2]) / atrSafe
+float displacement = (close - finiteGaussian) / atrSafe
+var int finiteDirection = 0
+if ta.rising(finiteGaussian, 4)
+    finiteDirection := 1
+else if ta.falling(finiteGaussian, 4)
+    finiteDirection := -1
+float finitePersistence = math.abs(ta.sma(finiteDirection, persistLen))
+
+// --- QG-14/QG-19 shared multi-pole cascade, regression branch, adaptive deadband branch ---
+float beta = (1.0 - math.cos(2.0 * math.pi / gaussLen)) / (math.pow(1.414, 2.0 / poles) - 1.0)
+float alpha = -beta + math.sqrt(beta * beta + 2.0 * beta)
+var float stage1 = na
+var float stage2 = na
+var float stage3 = na
+var float stage4 = na
+stage1 := alpha * close + (1.0 - alpha) * nz(stage1[1], close)
+stage2 := alpha * stage1 + (1.0 - alpha) * nz(stage2[1], close)
+stage3 := alpha * stage2 + (1.0 - alpha) * nz(stage3[1], close)
+stage4 := alpha * stage3 + (1.0 - alpha) * nz(stage4[1], close)
+float cascade = poles == 1 ? stage1 : poles == 2 ? stage2 : poles == 3 ? stage3 : stage4
+float regGaussian = ta.linreg(cascade, regLen, 0)
+float regSlope = (regGaussian - regGaussian[3]) / (atrSafe * 3.0)
+float regCurvature = (regGaussian - 2.0 * finiteGaussian[1] + finiteGaussian[2]) / atrSafe
+// QG-14's distinct Gaussian-vs-SuperTrend disagreement, volume intensity and range envelope.
+[qg14Supertrend, qg14SupertrendDirection] = ta.supertrend(0.15, 21)
+int qg14SlopeState = regGaussian > regGaussian[1] ? 1 : -1
+int qg14FilterState = regGaussian > qg14Supertrend ? 1 : -1
+bool qg14Choppy = qg14SlopeState * qg14FilterState < 0
+float volumeLow = ta.lowest(volume, 33)
+float volumeHigh = ta.highest(volume, 33)
+float volumeIntensityRaw = (volume - volumeLow) / math.max(volumeHigh - volumeLow, EPS)
+float qg14VolumeIntensity = f_clip(ta.hma(volumeIntensityRaw, 4), 0.0, 1.0)
+float qg14RangeWidthAtr = 2.0 * ta.sma(math.abs(close - open), 100) / atrSafe
+float qg14BandLocation = f_clip((close - regGaussian) / math.max(ta.sma(math.abs(close - open), 100) * 2.0, syminfo.mintick), -1.5, 1.5)
+float netMove = math.abs(close - close[erLen])
+float path = math.sum(math.abs(ta.change(close)), erLen)
+float er = path > 0.0 ? netMove / path : 0.0
+float erSmoothValue = ta.ema(er, erSmooth)
+float deadbandMultiplier = 2.5 + (0.8 - 2.5) * erSmoothValue
+float deadband = atrSafe * deadbandMultiplier
+float upperBand = regGaussian + deadband
+float lowerBand = regGaussian - deadband
+var float adaptiveLine = na
+adaptiveLine := nz(adaptiveLine[1], regGaussian)
+if upperBand < adaptiveLine
+    adaptiveLine := upperBand
+if lowerBand > adaptiveLine
+    adaptiveLine := lowerBand
+var int adaptiveDirection = 0
+if adaptiveLine > adaptiveLine[1]
+    adaptiveDirection := 1
+else if adaptiveLine < adaptiveLine[1]
+    adaptiveDirection := -1
+float adaptiveSlope = (adaptiveLine - adaptiveLine[3]) / (atrSafe * 3.0)
+float adaptiveCurvature = (adaptiveLine - 2.0 * adaptiveLine[1] + adaptiveLine[2]) / atrSafe
+
+// --- QG-04 adaptive DMI expert bank ---
+var array<float> plusSmooth = array.new_float()
+var array<float> minusSmooth = array.new_float()
+var array<float> trSmooth = array.new_float()
+var array<float> adxSmooth = array.new_float()
+var array<int> phaseDir = array.new_int()
+var array<float> phaseEntry = array.new_float()
+var array<float> phaseAtr = array.new_float()
+var array<int> phaseBars = array.new_int()
+var array<float> phaseMfe = array.new_float()
+var array<float> phaseMae = array.new_float()
+var array<float> rewardEma = array.new_float()
+var array<int> rewardN = array.new_int()
+var array<float> nowPlus = array.new_float()
+var array<float> nowMinus = array.new_float()
+var array<float> nowAdx = array.new_float()
+if barstate.isfirst
+    for i = 0 to DMI_N - 1
+        plusSmooth.push(na)
+        minusSmooth.push(na)
+        trSmooth.push(na)
+        adxSmooth.push(na)
+        phaseDir.push(0)
+        phaseEntry.push(na)
+        phaseAtr.push(na)
+        phaseBars.push(0)
+        phaseMfe.push(0.0)
+        phaseMae.push(0.0)
+        rewardEma.push(0.0)
+        rewardN.push(0)
+nowPlus.clear()
+nowMinus.clear()
+nowAdx.clear()
+float upMove = high - high[1]
+float downMove = low[1] - low
+float plusRaw = upMove > downMove and upMove > 0.0 ? upMove : 0.0
+float minusRaw = downMove > upMove and downMove > 0.0 ? downMove : 0.0
+for i = 0 to DMI_N - 1
+    int len = 5 + i * 5
+    float aDmi = 1.0 / len
+    float p0 = plusSmooth.get(i)
+    float m0 = minusSmooth.get(i)
+    float t0 = trSmooth.get(i)
+    float x0 = adxSmooth.get(i)
+    float p = na(p0) ? plusRaw : p0 + aDmi * (plusRaw - p0)
+    float m = na(m0) ? minusRaw : m0 + aDmi * (minusRaw - m0)
+    float t = na(t0) ? trueRange : t0 + aDmi * (trueRange - t0)
+    float pdi = 100.0 * p / math.max(t, EPS)
+    float mdi = 100.0 * m / math.max(t, EPS)
+    float dx = 100.0 * math.abs(pdi - mdi) / math.max(pdi + mdi, EPS)
+    float ax = na(x0) ? dx : x0 + (dx - x0) / 14.0
+    plusSmooth.set(i, p)
+    minusSmooth.set(i, m)
+    trSmooth.set(i, t)
+    adxSmooth.set(i, ax)
+    nowPlus.push(pdi)
+    nowMinus.push(mdi)
+    nowAdx.push(ax)
+    int oldDir = phaseDir.get(i)
+    int newDir = pdi > mdi ? 1 : mdi > pdi ? -1 : oldDir
+    if oldDir == 0 and newDir != 0
+        phaseDir.set(i, newDir)
+        phaseEntry.set(i, close)
+        phaseAtr.set(i, atrSafe)
+        phaseBars.set(i, 0)
+        phaseMfe.set(i, 0.0)
+        phaseMae.set(i, 0.0)
+    else if oldDir != 0
+        int held = phaseBars.get(i) + 1
+        float entry = phaseEntry.get(i)
+        float mfe = math.max(phaseMfe.get(i), oldDir == 1 ? high - entry : entry - low)
+        float mae = math.max(phaseMae.get(i), oldDir == 1 ? entry - low : high - entry)
+        phaseBars.set(i, held)
+        phaseMfe.set(i, mfe)
+        phaseMae.set(i, mae)
+        if newDir != oldDir and newDir != 0
+            float denom = math.max(phaseAtr.get(i), syminfo.mintick)
+            float finalMove = oldDir == 1 ? close - entry : entry - close
+            float score = (finalMove / denom + 0.25 * mfe / denom - 0.50 * mae / denom) / math.sqrt(math.max(1.0, held))
+            score -= held < 3 ? 0.25 : 0.0
+            int n = rewardN.get(i)
+            rewardEma.set(i, n == 0 ? score : recency * rewardEma.get(i) + (1.0 - recency) * score)
+            rewardN.set(i, n + 1)
+            phaseDir.set(i, newDir)
+            phaseEntry.set(i, close)
+            phaseAtr.set(i, atrSafe)
+            phaseBars.set(i, 0)
+            phaseMfe.set(i, 0.0)
+            phaseMae.set(i, 0.0)
+float weightTotal = 0.0
+float lenWeighted = 0.0
+float lenSqWeighted = 0.0
+float plusWeighted = 0.0
+float minusWeighted = 0.0
+float adxWeighted = 0.0
+for i = 0 to DMI_N - 1
+    float w = math.exp(f_clip(rewardEma.get(i) * softmaxSharpness, -20.0, 20.0))
+    float eLen = 5.0 + i * 5.0
+    weightTotal += w
+    lenWeighted += eLen * w
+    lenSqWeighted += eLen * eLen * w
+    plusWeighted += nowPlus.get(i) * w
+    minusWeighted += nowMinus.get(i) * w
+    adxWeighted += nowAdx.get(i) * w
+float effectiveLength = weightTotal > 0.0 ? lenWeighted / weightTotal : 20.0
+float horizonStd = weightTotal > 0.0 ? math.sqrt(math.max(0.0, lenSqWeighted / weightTotal - effectiveLength * effectiveLength)) : 0.0
+float horizonDispersion = f_clip(horizonStd / 17.5, 0.0, 1.0)
+float dmiPlus = weightTotal > 0.0 ? plusWeighted / weightTotal : 0.0
+float dmiMinus = weightTotal > 0.0 ? minusWeighted / weightTotal : 0.0
+float adx = weightTotal > 0.0 ? adxWeighted / weightTotal : 0.0
+float dmiDirection = f_clip((dmiPlus - dmiMinus) / 35.0, -1.0, 1.0)
+float dmiStrength = f_clip(adx / 50.0, 0.0, 1.0)
+
+// --- QG-05 SuperTrend parameter sweep and K=3 centroids ---
+var array<float> stUp = array.new_float()
+var array<float> stDn = array.new_float()
+var array<int> stDir = array.new_int()
+if barstate.isfirst
+    for i = 0 to ST_N - 1
+        stUp.push(hl2)
+        stDn.push(hl2)
+        stDir.push(0)
+array<float> distances = array.new_float()
+for i = 0 to ST_N - 1
+    float factor = 1.0 + i * 0.5
+    float u0 = stUp.get(i)
+    float d0 = stDn.get(i)
+    float u = close[1] < u0 ? math.min(hl2 + atrSafe * factor, u0) : hl2 + atrSafe * factor
+    float d = close[1] > d0 ? math.max(hl2 - atrSafe * factor, d0) : hl2 - atrSafe * factor
+    int old = stDir.get(i)
+    int direction = close > u ? 1 : close < d ? -1 : old
+    stUp.set(i, u)
+    stDn.set(i, d)
+    stDir.set(i, direction)
+    distances.push((close - (direction == 1 ? d : u)) / atrSafe)
+array<float> centroids = array.new_float()
+centroids.push(float(distances.percentile_linear_interpolation(25)))
+centroids.push(float(distances.percentile_linear_interpolation(50)))
+centroids.push(float(distances.percentile_linear_interpolation(75)))
+for iteration = 0 to 4
+    array<float> sums = array.new_float(3, 0.0)
+    array<int> counts = array.new_int(3, 0)
+    for i = 0 to ST_N - 1
+        float v = distances.get(i)
+        float d0 = math.abs(v - centroids.get(0))
+        float d1 = math.abs(v - centroids.get(1))
+        float d2 = math.abs(v - centroids.get(2))
+        int cluster = d1 < d0 ? 1 : 0
+        float nearest = cluster == 1 ? d1 : d0
+        if d2 < nearest
+            cluster := 2
+        sums.set(cluster, sums.get(cluster) + v)
+        counts.set(cluster, counts.get(cluster) + 1)
+    for j = 0 to 2
+        if counts.get(j) > 0
+            centroids.set(j, sums.get(j) / counts.get(j))
+array.sort(centroids, order.ascending)
+float stBear = centroids.get(0)
+float stNeutral = centroids.get(1)
+float stBull = centroids.get(2)
+float stMean = array.avg(distances)
+float stVar = 0.0
+for i = 0 to ST_N - 1
+    float diff = distances.get(i) - stMean
+    stVar += diff * diff
+float stDispersion = math.sqrt(stVar / ST_N)
+float stSeparation = stBull - stBear
+float stConsensus = f_clip(stMean / 2.0, -1.0, 1.0)
+
+// --- QG-26 atlas-summary vortex geometry; provisional, not original-source verified ---
+float vortexBasis = ta.ema(close, 21)
+float vortexAtr = math.max(nz(ta.sma(ta.atr(14), 50), atrSafe), syminfo.mintick)
+float vortexRawSlope = vortexBasis - vortexBasis[3]
+float vortexNorm = f_clip(vortexRawSlope / math.max(ta.highest(math.abs(vortexRawSlope), 80), syminfo.mintick), -1.0, 1.0)
+float vortexBreath = 1.0 - 0.3 * math.abs(vortexNorm)
+float vortexUpper = ta.ema(vortexBasis + vortexAtr * (3.0 - 0.9 * vortexBreath), 65)
+float vortexLower = ta.ema(vortexBasis - vortexAtr * (3.0 - 0.9 * vortexBreath), 65)
+float vortexUpperOuter = ta.ema(vortexBasis + vortexAtr * (3.0 + 0.9 * vortexBreath), 65)
+float vortexLowerOuter = ta.ema(vortexBasis - vortexAtr * (3.0 + 0.9 * vortexBreath), 65)
+float vortexZone = close > vortexUpper ? 1.0 : close < vortexLower ? -1.0 : 0.0
+bool vortexHighEntry = ta.crossover(close, vortexUpper)
+bool vortexLowEntry = ta.crossunder(close, vortexLower)
+
+// --- QG-14 confirmed MTF trend context ---
+int mtf1 = request.security(syminfo.tickerid, mtf1Input, f_mtfConfirmed(), gaps = barmerge.gaps_off, lookahead = barmerge.lookahead_on)
+int mtf2 = request.security(syminfo.tickerid, mtf2Input, f_mtfConfirmed(), gaps = barmerge.gaps_off, lookahead = barmerge.lookahead_on)
+int mtf3 = request.security(syminfo.tickerid, mtf3Input, f_mtfConfirmed(), gaps = barmerge.gaps_off, lookahead = barmerge.lookahead_on)
+int mtf4 = request.security(syminfo.tickerid, mtf4Input, f_mtfConfirmed(), gaps = barmerge.gaps_off, lookahead = barmerge.lookahead_on)
+int localGaussianDir = f_sign(regSlope, 0.02)
+int mtfAligned = (mtf1 == localGaussianDir ? 1 : 0) + (mtf2 == localGaussianDir ? 1 : 0) + (mtf3 == localGaussianDir ? 1 : 0) + (mtf4 == localGaussianDir ? 1 : 0)
+float mtfAgreement = mtfAligned / 4.0
+
+// --- Transparent, decorrelated baseline aggregation ---
+float gaussianGroup = f_clip((f_clip(finiteSlope, -1.0, 1.0) + f_clip(regSlope, -1.0, 1.0) + f_clip(adaptiveSlope, -1.0, 1.0)) / 3.0, -1.0, 1.0)
+float baselineScore = (gaussianGroup + dmiDirection + stConsensus) / 3.0
+int trendDirection = f_sign(baselineScore, 0.08)
+int gaussianDir = f_sign(gaussianGroup, 0.05)
+int dmiDir = f_sign(dmiDirection, 0.05)
+int stGroupDir = f_sign(stConsensus, 0.05)
+int upGroups = (gaussianDir == 1 ? 1 : 0) + (dmiDir == 1 ? 1 : 0) + (stGroupDir == 1 ? 1 : 0)
+int downGroups = (gaussianDir == -1 ? 1 : 0) + (dmiDir == -1 ? 1 : 0) + (stGroupDir == -1 ? 1 : 0)
+float consensus = math.max(upGroups, downGroups) / 3.0
+float strength = (math.abs(gaussianGroup) + math.abs(dmiDirection) * dmiStrength + math.abs(stConsensus)) / 3.0
+float dmiPersistence = f_clip(ta.sma(dmiDir, persistLen) * dmiDir, 0.0, 1.0)
+float stPersistence = f_clip(math.abs(ta.sma(stGroupDir, persistLen)), 0.0, 1.0)
+float persistence = (finitePersistence + dmiPersistence + stPersistence) / 3.0
+float acceleration = f_clip((finiteCurvature + regCurvature + adaptiveCurvature) / 3.0, -1.0, 1.0)
+float disagreement = f_clip((1.0 - math.abs(baselineScore)) * 0.45 + f_clip(stDispersion / 2.0, 0.0, 1.0) * 0.20 + horizonDispersion * 0.20 + (1.0 - mtfAgreement) * 0.15, 0.0, 1.0)
+int regime = volatilityRatio > 1.5 ? 3 : er < 0.22 and volatilityRatio < 0.85 ? 4 : er < 0.25 and math.abs(baselineScore) < 0.25 ? 2 : er > 0.30 and math.abs(baselineScore) > 0.30 ? 1 : 0
+
+// --- Update the shared state object ---
+qg.direction := trendDirection
+qg.strength := strength
+qg.consensus := consensus
+qg.persistence := persistence
+qg.acceleration := acceleration
+qg.regime := regime
+qg.disagreement := disagreement
+qg.gaussianLevel := regGaussian
+qg.gaussianSlope := regSlope
+qg.gaussianCurvature := regCurvature
+qg.displacementAtr := displacement
+qg.er := er
+qg.deadbandMultiplier := deadbandMultiplier
+qg.dmiPlus := dmiPlus
+qg.dmiMinus := dmiMinus
+qg.adx := adx
+qg.effectiveHorizon := effectiveLength
+qg.horizonDispersion := horizonDispersion
+qg.stBear := stBear
+qg.stNeutral := stNeutral
+qg.stBull := stBull
+qg.stDispersion := stDispersion
+qg.stSeparation := stSeparation
+qg.vortexSlope := vortexNorm
+qg.vortexZone := vortexZone
+qg.mtfAgreement := mtfAgreement
+
+// --- [PINE] Price-pane geometry and confirmed transitions ---
+color bullColor = colorblind ? color.rgb(0, 114, 178) : BULL
+color bearColor = colorblind ? color.rgb(230, 159, 0) : BEAR
+color trendColor = trendDirection > 0 ? bullColor : trendDirection < 0 ? bearColor : NEUTRAL
+plot(adaptiveLine, "Adaptive Gaussian trend line", color = trendColor, linewidth = 2)
+plot(showBands ? upperBand : na, "Adaptive deadband upper", color = color.new(bearColor, 68), linewidth = 1, style = plot.style_linebr)
+plot(showBands ? lowerBand : na, "Adaptive deadband lower", color = color.new(bullColor, 68), linewidth = 1, style = plot.style_linebr)
+plot(showVortex ? vortexUpper : na, "QG-26 provisional upper inner zone", color = color.new(AMBER, 35), linewidth = 1, style = plot.style_linebr)
+plot(showVortex ? vortexLower : na, "QG-26 provisional lower inner zone", color = color.new(AMBER, 35), linewidth = 1, style = plot.style_linebr)
+plot(showVortex ? vortexUpperOuter : na, "QG-26 provisional upper outer zone", color = color.new(AMBER, 78), linewidth = 1, style = plot.style_linebr)
+plot(showVortex ? vortexLowerOuter : na, "QG-26 provisional lower outer zone", color = color.new(AMBER, 78), linewidth = 1, style = plot.style_linebr)
+plotshape(showTurns and trendDirection == 1 and trendDirection[1] != 1 and barstate.isconfirmed, "Confirmed bullish state transition", shape.triangleup, location.belowbar, bullColor, size = size.tiny, text = "GE", textcolor = chart.fg_color)
+plotshape(showTurns and trendDirection == -1 and trendDirection[1] != -1 and barstate.isconfirmed, "Confirmed bearish state transition", shape.triangledown, location.abovebar, bearColor, size = size.tiny, text = "GE", textcolor = chart.fg_color)
+
+// Data Window diagnostics keep the price pane uncluttered while preserving source-level observability.
+plot(qg.strength, "TrendStrength (uncalibrated)", display = display.data_window)
+plot(qg.consensus, "TrendConsensus (3-group agreement)", display = display.data_window)
+plot(qg.persistence, "TrendPersistence", display = display.data_window)
+plot(qg.acceleration, "TrendAcceleration", display = display.data_window)
+plot(qg.disagreement, "Trend disagreement index (not probability)", display = display.data_window)
+plot(qg.gaussianSlope, "QG09 finite Gaussian slope / ATR", display = display.data_window)
+plot(qg.gaussianCurvature, "QG14 regression Gaussian curvature / ATR", display = display.data_window)
+plot(qg.displacementAtr, "QG09 price-filter displacement / ATR", display = display.data_window)
+plot(qg.er, "QG19 Efficiency Ratio", display = display.data_window)
+plot(qg.deadbandMultiplier, "QG19 adaptive deadband multiplier", display = display.data_window)
+plot(qg.dmiPlus, "QG04 adaptive +DI", display = display.data_window)
+plot(qg.dmiMinus, "QG04 adaptive -DI", display = display.data_window)
+plot(qg.adx, "QG04 adaptive ADX", display = display.data_window)
+plot(qg.effectiveHorizon, "QG04 softmax effective DMI horizon", display = display.data_window)
+plot(qg.horizonDispersion, "QG04 expert-horizon dispersion", display = display.data_window)
+plot(qg.stBear, "QG05 bearish ST centroid / ATR", display = display.data_window)
+plot(qg.stNeutral, "QG05 neutral ST centroid / ATR", display = display.data_window)
+plot(qg.stBull, "QG05 bullish ST centroid / ATR", display = display.data_window)
+plot(qg.stDispersion, "QG05 ST factor dispersion / ATR", display = display.data_window)
+plot(qg.stSeparation, "QG05 ST centroid separation / ATR", display = display.data_window)
+plot(qg.vortexSlope, "QG26 provisional normalized slope", display = display.data_window)
+plot(qg.vortexZone, "QG26 provisional zone position", display = display.data_window)
+plot(qg.mtfAgreement, "QG14 confirmed MTF agreement fraction", display = display.data_window)
+plot(float(qg.regime), "TrendRegime enum 0 transition / 1 trend / 2 range / 3 expansion / 4 compression", display = display.data_window)
+
+// --- [PINE] Intelligence table ---
+var table dash = table.new(position.top_right, 2, 15, bgcolor = color.new(#101820, 8), frame_color = color.new(#59636e, 35), frame_width = 1, border_color = color.new(#59636e, 70), border_width = 1)
+if barstate.islast and showDashboard
+    table.cell(dash, 0, 0, "GOLDEN EYE · TREND / REGIME", text_color = color.rgb(255, 211, 92), bgcolor = color.new(#18232d, 0), text_size = size.small)
+    table.cell(dash, 1, 0, preset + " · v0.1", text_color = chart.fg_color, bgcolor = color.new(#18232d, 0), text_size = size.tiny)
+    table.cell(dash, 0, 1, "Regime / direction", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 1, f_regime(qg.regime) + " · " + f_dir(qg.direction), text_color = f_dirColor(qg.direction, colorblind), text_size = size.tiny)
+    table.cell(dash, 0, 2, "Strength · uncalibrated", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 2, str.tostring(qg.strength, "#.###"), text_color = chart.fg_color, text_size = size.tiny)
+    table.cell(dash, 0, 3, "Agreement · three groups", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 3, str.tostring(qg.consensus * 100.0, "#.0") + "%", text_color = chart.fg_color, text_size = size.tiny)
+    table.cell(dash, 0, 4, "Persistence / acceleration", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 4, str.tostring(qg.persistence, "#.##") + " / " + str.tostring(qg.acceleration, "#.###"), text_color = chart.fg_color, text_size = size.tiny)
+    table.cell(dash, 0, 5, "Disagreement · not probability", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 5, str.tostring(qg.disagreement, "#.###"), text_color = AMBER, text_size = size.tiny)
+    table.cell(dash, 0, 6, "Gaussian displacement / ATR", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 6, str.tostring(qg.displacementAtr, "#.###"), text_color = chart.fg_color, text_size = size.tiny)
+    table.cell(dash, 0, 7, "ER / deadband width", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 7, str.tostring(qg.er, "#.###") + " / " + str.tostring(qg.deadbandMultiplier, "#.##") + " ATR", text_color = chart.fg_color, text_size = size.tiny)
+    table.cell(dash, 0, 8, "Adaptive DMI +DI / -DI", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 8, str.tostring(qg.dmiPlus, "#.0") + " / " + str.tostring(qg.dmiMinus, "#.0"), text_color = chart.fg_color, text_size = size.tiny)
+    table.cell(dash, 0, 9, "ADX / effective horizon", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 9, str.tostring(qg.adx, "#.0") + " / " + str.tostring(qg.effectiveHorizon, "#.0") + " bars", text_color = chart.fg_color, text_size = size.tiny)
+    table.cell(dash, 0, 10, "DMI horizon dispersion", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 10, str.tostring(qg.horizonDispersion, "#.###"), text_color = chart.fg_color, text_size = size.tiny)
+    table.cell(dash, 0, 11, "ST bear / mid / bull centroids", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 11, str.tostring(qg.stBear, "#.##") + " / " + str.tostring(qg.stNeutral, "#.##") + " / " + str.tostring(qg.stBull, "#.##"), text_color = chart.fg_color, text_size = size.tiny)
+    table.cell(dash, 0, 12, "ST dispersion / separation", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 12, str.tostring(qg.stDispersion, "#.###") + " / " + str.tostring(qg.stSeparation, "#.###") + " ATR", text_color = chart.fg_color, text_size = size.tiny)
+    table.cell(dash, 0, 13, "Vortex slope / zone · provisional", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 13, str.tostring(qg.vortexSlope, "#.###") + " / " + str.tostring(qg.vortexZone, "#.0"), text_color = chart.fg_color, text_size = size.tiny)
+    table.cell(dash, 0, 14, "Confirmed MTF agreement", text_color = color.silver, text_size = size.tiny)
+    table.cell(dash, 1, 14, str.tostring(qg.mtfAgreement * 100.0, "#.0") + "% · " + str.tostring(mtf1) + "/" + str.tostring(mtf2) + "/" + str.tostring(mtf3) + "/" + str.tostring(mtf4), text_color = chart.fg_color, text_size = size.tiny)
+
+bool bullTurn = trendDirection == 1 and trendDirection[1] != 1 and barstate.isconfirmed
+bool bearTurn = trendDirection == -1 and trendDirection[1] != -1 and barstate.isconfirmed
+alertcondition(bullTurn, "Golden Eye bullish trend transition", "Confirmed trend state turned bullish: {{ticker}} {{interval}}")
+alertcondition(bearTurn, "Golden Eye bearish trend transition", "Confirmed trend state turned bearish: {{ticker}} {{interval}}")
+alertcondition(vortexHighEntry and barstate.isconfirmed, "QG-26 provisional upper-zone entry", "Atlas-derived upper zone entry: {{ticker}} {{interval}}")
+alertcondition(vortexLowEntry and barstate.isconfirmed, "QG-26 provisional lower-zone entry", "Atlas-derived lower zone entry: {{ticker}} {{interval}}")
+string payload = "{\"engine\":\"GOLDEN_EYE_TREND_REGIME_V0_1\",\"symbol\":\"" + syminfo.tickerid + "\",\"timeframe\":\"" + timeframe.period + "\",\"bar_time\":" + str.tostring(time) + ",\"confirmed\":true,\"direction\":" + str.tostring(qg.direction) + ",\"strength\":" + str.tostring(qg.strength, "#.#####") + ",\"consensus\":" + str.tostring(qg.consensus, "#.#####") + ",\"persistence\":" + str.tostring(qg.persistence, "#.#####") + ",\"acceleration\":" + str.tostring(qg.acceleration, "#.#####") + ",\"regime\":" + str.tostring(qg.regime) + ",\"disagreement_index\":" + str.tostring(qg.disagreement, "#.#####") + ",\"dmi_plus\":" + str.tostring(qg.dmiPlus, "#.###") + ",\"dmi_minus\":" + str.tostring(qg.dmiMinus, "#.###") + ",\"adx\":" + str.tostring(qg.adx, "#.###") + ",\"effective_dmi_horizon\":" + str.tostring(qg.effectiveHorizon, "#.###") + ",\"mtf_agreement\":" + str.tostring(qg.mtfAgreement, "#.#####") + "}"
+if exportJson and barstate.isconfirmed
+    alert(payload, alert.freq_once_per_bar_close)
+
+// RESOURCE BUDGET: 4 unique request.security calls; 0 labels/lines/boxes/polylines; 1 table (30 cells); 30 plots; bounded loops (50 Gaussian taps, 8 DMI experts, 9 SuperTrend factors, 5 clustering passes).

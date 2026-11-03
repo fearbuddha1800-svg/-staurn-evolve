@@ -1,0 +1,32 @@
+//@version=5
+strategy("RSI + EMA Trend", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100)
+
+// Inputs
+rsiLen = input.int(14, "RSI Length")
+emaLen = input.int(50, "EMA Length")
+atrLen = input.int(14, "ATR Length")
+
+// Indicators
+rsi = ta.rsi(close, rsiLen)
+ema = ta.ema(close, emaLen)
+atr = ta.atr(atrLen)
+
+// Trend filter: price above EMA = bullish, below = bearish
+bullish = close > ema
+bearish = close < ema
+
+// Entry: RSI pullback in trend direction
+longCondition = bullish and ta.crossover(rsi, 35)
+shortCondition = bearish and ta.crossunder(rsi, 65)
+
+if longCondition
+    strategy.entry("Long", strategy.long)
+    strategy.exit("Long Exit", "Long", stop=close - atr * 2, limit=close + atr * 3)
+
+if shortCondition
+    strategy.entry("Short", strategy.short)
+    strategy.exit("Short Exit", "Short", stop=close + atr * 2, limit=close - atr * 3)
+
+plot(rsi, "RSI", color.purple)
+plot(ema, "EMA", color.blue)
+plot(atr, "ATR", color.orange)

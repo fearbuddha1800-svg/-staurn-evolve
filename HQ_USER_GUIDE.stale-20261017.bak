@@ -1,0 +1,47 @@
+# Hermes Scalp — Cockpit User Guide (1-page)
+
+**Dashboard URL:** http://localhost:8490 (served by `cockpit.py`)
+
+Read-only. The cockpit never places orders — it only reads MT5, signals.db, and config.json.
+
+## Panels (left-to-right, top-to-bottom)
+
+| Panel | What to look at |
+|---|---|
+| **Signal Inbox** | Recent signals from the trades ledger: time, symbol, setup (side), source channel, status (Validated / Journalled / New). New = not yet acted on. |
+| **Execution Lifecycle** | 7-step signal→position chain (Captured → Validated → Simulated → Position → Trailing → Closed → Journalled). Steps light up as trades progress. |
+| **Simulation (Paper Mode)** | Paper-mode preview: symbol, setup, side, direction, session, timeframe, entry, stop loss, R:R. No real orders. Flip to live in Settings. |
+| **Sources** | Live signal sources with timestamps (FX Flow, Macro Pulse, Alpha Feed, News Sentinel — examples). Green dot = active feed. |
+| **Account** | Gauge = equity/balance %. Balance, Equity, Day P/L (all), From signals, From algo. Green = profit, red = loss. |
+| **Open positions** | Every open position: ticket, symbol, side, lots, entry, now price, P/L, R×, SL, source (signal/algo), opened time, TRACE button. TRACE opens the full signal→exit event trail for that ticket. |
+| **Event Journal** | Today's events: time, event type, detail. Scroll for history. |
+| **Mobile** | Phone-mockup HTML fragment of the same key data for small screens. |
+| **Neural Readiness** | Labels collected vs 300 needed; progress bar (green when ready); last evaluation AUC + decision badge (PROMOTE green / KEEP_SHADOW amber / REJECT red). Below 300 shows "collecting — N labels to go". |
+| **Latency** | p50/p95/p99 seconds per pipeline stage (ledger, inbox, journal, history, positions, trace, neural, lineage, pine). Higher p99 = bottleneck. |
+| **Lineage** | Last 5 intents: intent id, source, symbol, side, state (RESERVED/SUBMITTED/FILLED/REJECTED). Proof of signal→intent→order→position chain. |
+| **Pine Strategies** | Registered Pine strategies from config.json: name, path, enabled/disabled badge, paper/live badge. |
+
+## Footer bar (always visible)
+
+- **updated HH:MM:SS • auto-refresh 5s • read-only**
+- Engine badges: daemon / manage / strategy / trade-relay = online (green) or offline (red)
+- `HALT on signal entries` — new executions blocked (delete HALT file to resume)
+- `STOP` — all engines stopped
+- `PAUSE (new entries blocked)` — daemon paused, open positions still managing
+- `trade-relay :8484 LIVE` / `trade-relay DOWN` — shadow relay socket check
+
+## What to check first thing each morning
+
+1. **Account panel:** balance/equity, day P/L split signals vs algo.
+2. **Open positions:** any positions without BE/trail? Check source and R×.
+3. **Footer:** any HALT/PAUSE/STOP? Is trade-relay :8484 LIVE?
+4. **Neural Readiness:** are labels ≥300? What was the last decision?
+5. **Event Journal:** any skipped/failed entries overnight?
+6. **Latency:** any stage with elevated p99?
+
+## Emergency actions (done outside the cockpit — via files or DM console)
+
+- `HALT` file next to daemon.py → stops new executions instantly.
+- `PAUSE` file (or DM `pause` to the relay account) → blocks new entries only.
+- `STOP` file → clean shutdown of all engine loops.
+- DM `close <ticket>` / `closeall` → close positions from Telegram.

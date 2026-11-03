@@ -1,0 +1,30 @@
+//@version=6
+indicator("SuperTrend", "SuperTrend", overlay = true, format = format.price)
+//----------------------------------------------------------------------------------------------------------------------
+// Constants
+//----------------------------------------------------------------------------------------------------------------------
+TREND_UP = 1
+TREND_DN = -1
+
+//----------------------------------------------------------------------------------------------------------------------
+// Settings
+//----------------------------------------------------------------------------------------------------------------------
+atrLengthInput = input.int(10, "ATR Length", minval = 1, group = "Settings", tooltip = "Number of bars used to compute the Wilder ATR.")
+factorInput = input.float(3.0, "Factor", minval = 0, step = 0.1, group = "Settings", tooltip = "ATR multiplier setting how far the trailing stop sits from the bar midpoint.")
+
+upColorInput = input.color(#089981, "Uptrend Color", group = "Style", tooltip = "Line color while the trend is up.")
+dnColorInput = input.color(#f23645, "Downtrend Color", group = "Style", tooltip = "Line color while the trend is down.")
+
+//----------------------------------------------------------------------------------------------------------------------
+// Calculations
+//----------------------------------------------------------------------------------------------------------------------
+atrValue = ta.atr(atrLengthInput)
+
+basicUpper = hl2 + factorInput * atrValue
+basicLower = hl2 - factorInput * atrValue
+
+var float finalUpper = na
+var float finalLower = na
+var int trendDir = TREND_DN
+
+if not na(atrValue)

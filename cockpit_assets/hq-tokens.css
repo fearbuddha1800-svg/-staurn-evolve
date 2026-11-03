@@ -1,0 +1,97 @@
+/* VELA Terminal design tokens — deep dark theme with neon accents */
+:root {
+  /* Backgrounds */
+  --bg-deep: #050508;
+  --bg-panel: #0a0a0f;
+  --bg-panel-hover: #111118;
+  --bg-input: #0d0d14;
+  --bg-glass: rgba(10, 10, 15, 0.7);
+
+  /* Text */
+  --fg-primary: #e8e8f0;
+  --fg-secondary: #9aa0b0;
+  --fg-muted: #5a5f70;
+  --fg-accent: #00f0ff;
+  --fg-accent-dim: #00b8d9;
+
+  /* Status colors */
+  --ok: #00ff88;
+  --warn: #ffcc00;
+  --bad: #ff3366;
+  --neutral: #8899aa;
+
+  /* Neon accents */
+  --neon-cyan: #00f0ff;
+  --neon-magenta: #ff00ff;
+  --neon-lime: #b5f268;
+  --neon-orange: #ff9900;
+  --neon-red: #ff3366;
+
+  /* Borders & shadows */
+  --border-subtle: #222233;
+  --border-bright: #00f0ff;
+  --glow-cyan: 0 0 12px rgba(0, 240, 255, 0.35);
+  --glow-magenta: 0 0 12px rgba(255, 0, 255, 0.35);
+  --glow-lime: 0 0 12px rgba(181, 242, 104, 0.35);
+  --glow-red: 0 0 12px rgba(255, 51, 102, 0.35);
+
+  /* Layout */
+  --panel-radius: 8px;
+  --panel-padding: 16px;
+  --gap: 12px;
+  --header-height: 56px;
+  --sidebar-width: 260px;
+  --market-ribbon-height: 44px;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-smooth: 0.3s ease;
+
+  /* Fonts */
+  --font-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+  --font-ui: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg-deep: #050508;
+  --bg-panel: #0a0a0f;
+  --fg-primary: #e8e8f0;
+}
+
+/* Utility: neon text */
+.text-neon-cyan { color: var(--neon-cyan); text-shadow: var(--glow-cyan); }
+.text-neon-magenta { color: var(--neon-magenta); text-shadow: var(--glow-magenta); }
+.text-neon-lime { color: var(--neon-lime); text-shadow: var(--glow-lime); }
+.text-neon-red { color: var(--neon-red); text-shadow: var(--glow-red); }
+
+/* Utility: status badges */
+.status-ok { color: var(--ok); }
+.status-warn { color: var(--warn); }
+.status-bad { color: var(--bad); }
+.status-neutral { color: var(--neutral); }
+
+/* Glass panel base */
+.panel-glass {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--panel-radius);
+  backdrop-filter: blur(8px);
+}
+
+/* Monospace numeric data */
+.data-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* Pulse animation for live indicators */
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.live-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 8px var(--ok);
+  animation: pulse-live 2s infinite;
+}
+.live-dot.bad { background: var(--bad); box-shadow: 0 0 8px var(--bad); }
+.live-dot.warn { background: var(--warn); box-shadow: 0 0 8px var(--warn); }

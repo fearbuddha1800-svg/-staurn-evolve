@@ -1,0 +1,345 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+//@version=6
+indicator("V01D AGI kRAWL7ER Ω // VELA LUX QUANT ENGINE", shorttitle="V01D Ω", overlay=true, max_labels_count=200)
+ 
+// --- Constants ---
+int HISTORY_SIZE = 8
+ 
+// --- Inputs ---
+string GROUP_A = "Engine A — Velocity"
+int fastLen = input.int(8, "Fast EMA", minval=2, maxval=100, group=GROUP_A, tooltip="Fast trend length.")
+int slowLen = input.int(21, "Slow EMA", minval=3, maxval=200, group=GROUP_A, tooltip="Slow trend length.")
+int rsiLen = input.int(14, "RSI length", minval=2, maxval=100, group=GROUP_A, tooltip="RSI momentum lookback.")
+int stochLen = input.int(14, "Stochastic length", minval=2, maxval=100, group=GROUP_A, tooltip="Stochastic momentum lookback.")
+int volumeLen = input.int(20, "Volume average length", minval=2, maxval=200, group=GROUP_A, tooltip="Volume normalization lookback.")
+float volumeThrust = input.float(1.2, "Volume thrust ratio", minval=0.5, maxval=5.0, step=0.1, group=GROUP_A, tooltip="Relative volume needed for a thrust vote.")
+float thresholdA = input.float(55, "Engine A readiness", minval=0, maxval=100, step=1, group=GROUP_A, tooltip="Engine A score required for alignment.")
+ 
+string GROUP_B = "Engine B — Structure"
+int pivotLen = input.int(5, "Swing pivot strength", minval=2, maxval=30, group=GROUP_B, tooltip="Bars per side used to confirm swing points.")
+int htfEmaLen = input.int(50, "HTF EMA length", minval=5, maxval=200, group=GROUP_B, tooltip="EMA length for higher-timeframe bias.")
+float thresholdB = input.float(55, "Engine B readiness", minval=0, maxval=100, step=1, group=GROUP_B, tooltip="Engine B score required for alignment.")
+ 
+string GROUP_C = "Engine C — Snap / Statistics"
+int statLen = input.int(30, "Deviation length", minval=5, maxval=200, group=GROUP_C, tooltip="Lookback for the adaptive statistical envelope.")
+float deviationMult = input.float(1.8, "Deviation multiplier", minval=0.5, maxval=4, step=0.1, group=GROUP_C, tooltip="Width of the statistical envelope.")
+int bandLen = input.int(20, "Band length", minval=5, maxval=200, group=GROUP_C, tooltip="Bollinger, channel and Donchian lookback.")
+int probabilityLen = input.int(30, "Probability sample", minval=5, maxval=200, group=GROUP_C, tooltip="Rolling directional-frequency sample.")
+float channelAtrMult = input.float(1.5, "Channel ATR multiplier", minval=0.5, maxval=4, step=0.1, group=GROUP_C, tooltip="ATR width for channel rejections.")
+float climaxRatio = input.float(2.0, "Volume climax ratio", minval=1, maxval=8, step=0.1, group=GROUP_C, tooltip="Relative volume threshold for climax votes.")
+float thresholdC = input.float(55, "Engine C readiness", minval=0, maxval=100, step=1, group=GROUP_C, tooltip="Engine C score required for alignment.")
+ 
+string GROUP_ADAPT = "Adaptive Model & Regime"
+float masterBase = input.float(62, "Base master threshold", minval=40, maxval=90, step=1, group=GROUP_ADAPT, tooltip="Base score threshold; the engine adjusts it for volatility.")
+int volRankLen = input.int(100, "Volatility rank lookback", minval=20, maxval=300, group=GROUP_ADAPT, tooltip="Window for ATR percentile regime classification.")
+int adxLen = input.int(14, "ADX length", minval=3, maxval=50, group=GROUP_ADAPT, tooltip="Trend strength and anti-chop filter length.")
+int erLen = input.int(20, "Efficiency ratio length", minval=5, maxval=100, group=GROUP_ADAPT, tooltip="Net movement divided by total path length.")
+int regressionLen = input.int(30, "Regression length", minval=5, maxval=200, group=GROUP_ADAPT, tooltip="Linear regression slope regime measure.")
+float learningRate = input.float(0.03, "Online learner rate", minval=0.001, maxval=0.2, step=0.001, group=GROUP_ADAPT, tooltip="Small online logistic-model update per confirmed bar.")
+bool blockExtremeVol = input.bool(true, "Block extreme volatility", group=GROUP_ADAPT, tooltip="Suppress entries during extreme ATR/realized-volatility regimes.")
+ 
+string GROUP_FILTER = "Signal Filters"
+int cooldownBars = input.int(5, "Signal cooldown bars", minval=0, maxval=500, group=GROUP_FILTER, tooltip="Minimum bars between confirmed BUY/SELL signals.")
+bool requireInstitutional = input.bool(true, "Require OB/FVG/sweep reaction", group=GROUP_FILTER, tooltip="Require a price reaction at a detected proxy zone or liquidity sweep.")
+bool useSession = input.bool(false, "Use session filter", group=GROUP_FILTER, tooltip="Allow signals only inside the selected session.")
+string sessionInput = input.session("0000-2359", "Active session", group=GROUP_FILTER, tooltip="Exchange-time session used when enabled.")
+bool showMarkers = input.bool(true, "Show BUY/SELL labels", group=GROUP_FILTER, tooltip="Draw confirmed signal triangles and strength labels.")
+string dashboardPositionInput = input.string("Bottom Left", "Dashboard position", options=["Top Right", "Top Left", "Bottom Right", "Bottom Left"], group=GROUP_FILTER, tooltip="Dashboard corner on the chart.")
+ 
+// --- Helpers ---
+f_scoreColor(float score) =>
+    score >= 75 ? color.lime : score >= 55 ? color.aqua : score >= 40 ? color.orange : color.silver
+ 
+f_status(float bullScore, float bearScore, float threshold, bool fired) =>
+    fired ? "FIRED" : math.max(bullScore, bearScore) >= threshold ? "CHARGING" : "READY"
+ 
+f_grade(float score) =>
+    score >= 88 ? "A+" : score >= 78 ? "A" : score >= 68 ? "B" : "C"
+ 
+// --- Shared market measures ---
+float emaFast = ta.ema(close, fastLen)
+float emaSlow = ta.ema(close, slowLen)
+float rsiValue = ta.rsi(close, rsiLen)
+float rsiAccel = rsiValue - rsiValue[1]
+[macdLine, macdSignal, macdHist] = ta.macd(close, 12, 26, 9)
+float stochValue = ta.stoch(close, high, low, stochLen)
+float avgVolume = ta.sma(volume, volumeLen)
+float volumeRatio = not na(avgVolume) and avgVolume > 0 and not na(volume) ? volume / avgVolume : 1.0
+float atrValue = ta.atr(14)
+float volumeDeltaProxy = high > low and not na(volume) ? volume * (close - open) / (high - low) : 0.0
+float deltaAverage = ta.sma(volumeDeltaProxy, volumeLen)
+float rsiRank = ta.percentrank(rsiValue, volRankLen)
+float stochRank = ta.percentrank(stochValue, volRankLen)
+float volumeRank = ta.percentrank(volume, volRankLen)
+float pvCorrelation = ta.correlation(ta.change(close), ta.change(volume), probabilityLen)
+ 
+// --- Regime: ADX, efficiency ratio, regression slope and volatility rank ---
+[diPlus, diMinus, adx] = ta.dmi(adxLen, adxLen)
+float erDenominator = ta.sma(math.abs(ta.change(close)), erLen) * erLen
+float efficiencyRatio = not na(erDenominator) and erDenominator > 0 ? math.abs(close - close[erLen]) / erDenominator : 0.0
+float regressionNow = ta.linreg(close, regressionLen, 0)
+float regressionPrior = ta.linreg(close, regressionLen, 1)
+float regressionSlope = regressionNow - regressionPrior
+bool trendRegime = adx >= 18 and efficiencyRatio >= 0.25
+string regimeText = trendRegime ? (regressionSlope >= 0 ? "TREND UP" : "TREND DOWN") : "RANGE / CHOP"
+float atrRank = ta.percentrank(atrValue, volRankLen)
+float logReturn = close > 0 and close[1] > 0 ? math.log(close / close[1]) : na
+float realizedVol = ta.stdev(logReturn, 20)
+float realizedVolBase = ta.sma(realizedVol, 50)
+bool extremeVol = (not na(atrRank) and atrRank >= 95) or (not na(realizedVolBase) and realizedVol > realizedVolBase * 1.8)
+bool highVol = extremeVol or (not na(atrRank) and atrRank >= 75)
+bool lowVol = not na(atrRank) and atrRank <= 25
+string volatilityText = extremeVol ? "EXTREME" : highVol ? "HIGH" : lowVol ? "LOW" : "NORMAL"
+float thresholdAdjustment = extremeVol ? 10.0 : highVol ? 5.0 : lowVol ? -4.0 : 0.0
+float adaptiveThreshold = math.min(95.0, math.max(40.0, masterBase + thresholdAdjustment))
+bool antiChopPass = not (adx < 18 and efficiencyRatio < 0.20)
+bool volatilityPass = not (blockExtremeVol and extremeVol)
+bool sessionPass = not useSession or not na(time(timeframe.period, sessionInput))
+ 
+// --- Engine A: velocity and ensemble votes ---
+bool aTrendBull = emaFast > emaSlow and close > emaFast
+bool aTrendBear = emaFast < emaSlow and close < emaFast
+bool aRsiBull = rsiValue > 50 and rsiAccel > 0
+bool aRsiBear = rsiValue < 50 and rsiAccel < 0
+bool aMacdBull = macdHist > 0 and macdHist > macdHist[1]
+bool aMacdBear = macdHist < 0 and macdHist < macdHist[1]
+bool aStochBull = ta.crossover(stochValue, 20) or (stochValue > 50 and stochValue > stochValue[1])
+bool aStochBear = ta.crossunder(stochValue, 80) or (stochValue < 50 and stochValue < stochValue[1])
+bool aVolumeBull = volumeRatio >= volumeThrust and close > open
+bool aVolumeBear = volumeRatio >= volumeThrust and close < open
+bool aDeltaBull = deltaAverage > 0 and volumeDeltaProxy > deltaAverage
+bool aDeltaBear = deltaAverage < 0 and volumeDeltaProxy < deltaAverage
+float voteBull = (close > ta.sma(close, 20) ? 1.0 : 0.0) + (rsiValue > 50 ? 1.0 : 0.0) + (macdHist > 0 ? 1.0 : 0.0) + (stochValue > 50 ? 1.0 : 0.0) + (close > ta.sma(close, 50) ? 1.0 : 0.0)
+float voteBear = (close < ta.sma(close, 20) ? 1.0 : 0.0) + (rsiValue < 50 ? 1.0 : 0.0) + (macdHist < 0 ? 1.0 : 0.0) + (stochValue < 50 ? 1.0 : 0.0) + (close < ta.sma(close, 50) ? 1.0 : 0.0)
+float aBullCount = (aTrendBull ? 1.0 : 0.0) + (aRsiBull ? 1.0 : 0.0) + (aMacdBull ? 1.0 : 0.0) + (aStochBull ? 1.0 : 0.0) + (aVolumeBull ? 1.0 : 0.0) + (aDeltaBull ? 1.0 : 0.0) + (voteBull >= 3 ? 1.0 : 0.0)
+float aBearCount = (aTrendBear ? 1.0 : 0.0) + (aRsiBear ? 1.0 : 0.0) + (aMacdBear ? 1.0 : 0.0) + (aStochBear ? 1.0 : 0.0) + (aVolumeBear ? 1.0 : 0.0) + (aDeltaBear ? 1.0 : 0.0) + (voteBear >= 3 ? 1.0 : 0.0)
+float aBullScore = 100.0 * aBullCount / 7.0
+float aBearScore = 100.0 * aBearCount / 7.0
+ 
+// --- Engine B: structure, liquidity and stored proxy zones ---
+float pivotHigh = ta.pivothigh(high, pivotLen, pivotLen)
+float pivotLow = ta.pivotlow(low, pivotLen, pivotLen)
+float lastPivotHigh = ta.valuewhen(not na(pivotHigh), pivotHigh, 0)
+float lastPivotLow = ta.valuewhen(not na(pivotLow), pivotLow, 0)
+bool crossPivotHigh = ta.crossover(close, lastPivotHigh)
+bool crossPivotLow = ta.crossunder(close, lastPivotLow)
+bool bBosBull = not na(lastPivotHigh) and crossPivotHigh
+bool bBosBear = not na(lastPivotLow) and crossPivotLow
+bool bSweepBull = not na(lastPivotLow) and low < lastPivotLow and close > lastPivotLow
+bool bSweepBear = not na(lastPivotHigh) and high > lastPivotHigh and close < lastPivotHigh
+bool bFvgBull = low > high[2]
+bool bFvgBear = high < low[2]
+bool bObBull = close > high[1] and close[1] < open[1]
+bool bObBear = close < low[1] and close[1] > open[1]
+var float bullFvgTop = na
+var float bullFvgBottom = na
+var int bullFvgBar = na
+var float bearFvgTop = na
+var float bearFvgBottom = na
+var int bearFvgBar = na
+var float bullObTop = na
+var float bullObBottom = na
+var int bullObBar = na
+var float bearObTop = na
+var float bearObBottom = na
+var int bearObBar = na
+if bFvgBull
+    bullFvgTop := low
+    bullFvgBottom := high[2]
+    bullFvgBar := bar_index
+if bFvgBear
+    bearFvgTop := low[2]
+    bearFvgBottom := high
+    bearFvgBar := bar_index
+if bObBull
+    bullObTop := high[1]
+    bullObBottom := low[1]
+    bullObBar := bar_index
+if bObBear
+    bearObTop := high[1]
+    bearObBottom := low[1]
+    bearObBar := bar_index
+bool bullFvgReaction = not na(bullFvgBar) and bar_index > bullFvgBar and low <= bullFvgTop and close >= bullFvgBottom and close > open
+bool bearFvgReaction = not na(bearFvgBar) and bar_index > bearFvgBar and high >= bearFvgBottom and close <= bearFvgTop and close < open
+bool bullObReaction = not na(bullObBar) and bar_index > bullObBar and low <= bullObTop and close >= bullObBottom and close > open
+bool bearObReaction = not na(bearObBar) and bar_index > bearObBar and high >= bearObBottom and close <= bearObTop and close < open
+bool institutionalBull = bSweepBull or bullFvgReaction or bullObReaction
+bool institutionalBear = bSweepBear or bearFvgReaction or bearObReaction
+bool htfDirBull = close > ta.ema(close, htfEmaLen)
+bool htfDirBear = close < ta.ema(close, htfEmaLen)
+bool bLegBull = emaFast > emaSlow and emaFast > emaFast[1] and emaSlow > emaSlow[1]
+bool bLegBear = emaFast < emaSlow and emaFast < emaFast[1] and emaSlow < emaSlow[1]
+float bBullCount = (bBosBull ? 1.0 : 0.0) + (bSweepBull ? 1.0 : 0.0) + (bullFvgReaction ? 1.0 : 0.0) + (bullObReaction ? 1.0 : 0.0) + (htfDirBull ? 1.0 : 0.0) + (bLegBull ? 1.0 : 0.0)
+float bBearCount = (bBosBear ? 1.0 : 0.0) + (bSweepBear ? 1.0 : 0.0) + (bearFvgReaction ? 1.0 : 0.0) + (bearObReaction ? 1.0 : 0.0) + (htfDirBear ? 1.0 : 0.0) + (bLegBear ? 1.0 : 0.0)
+float bBullScore = 100.0 * bBullCount / 6.0
+float bBearScore = 100.0 * bBearCount / 6.0
+ 
+// --- Engine C: statistical snap, percentile and volume signals ---
+float statBasis = ta.ema(close, statLen)
+float statDev = ta.stdev(close - statBasis, statLen)
+float statUpper = statBasis + statDev * deviationMult
+float statLower = statBasis - statDev * deviationMult
+float bandBasis = ta.sma(close, bandLen)
+float bandDev = ta.stdev(close, bandLen) * 2.0
+float bandUpper = bandBasis + bandDev
+float bandLower = bandBasis - bandDev
+float donchianUpper = ta.highest(high[1], bandLen)
+float donchianLower = ta.lowest(low[1], bandLen)
+float channelBasis = ta.ema(close, bandLen)
+float channelUpper = channelBasis + atrValue * channelAtrMult
+float channelLower = channelBasis - atrValue * channelAtrMult
+float upFrequency = ta.sma(close > close[1] ? 1.0 : 0.0, probabilityLen)
+float downFrequency = ta.sma(close < close[1] ? 1.0 : 0.0, probabilityLen)
+float vwapValue = ta.vwap(hlc3)
+bool cStatBull = low < statLower and close > statLower
+bool cStatBear = high > statUpper and close < statUpper
+bool cBandBull = low < bandLower and close > bandLower
+bool cBandBear = high > bandUpper and close < bandUpper
+bool cDonBull = not na(donchianLower) and low < donchianLower and close > donchianLower
+bool cDonBear = not na(donchianUpper) and high > donchianUpper and close < donchianUpper
+bool cClimaxBull = volumeRatio >= climaxRatio and close > open
+bool cClimaxBear = volumeRatio >= climaxRatio and close < open
+bool cChannelBull = low < channelLower and close > channelLower
+bool cChannelBear = high > channelUpper and close < channelUpper
+bool cProbabilityBull = not na(upFrequency) and upFrequency >= 0.55 and close >= close[1]
+bool cProbabilityBear = not na(downFrequency) and downFrequency >= 0.55 and close <= close[1]
+bool cVwapBull = not na(vwapValue) and ta.crossover(close, vwapValue)
+bool cVwapBear = not na(vwapValue) and ta.crossunder(close, vwapValue)
+bool cRankBull = (not na(rsiRank) and rsiRank <= 15 and close > open) or (not na(stochRank) and stochRank <= 15 and close > open)
+bool cRankBear = (not na(rsiRank) and rsiRank >= 85 and close < open) or (not na(stochRank) and stochRank >= 85 and close < open)
+bool cCorrBull = not na(pvCorrelation) and pvCorrelation > 0.2 and volumeDeltaProxy > 0
+bool cCorrBear = not na(pvCorrelation) and pvCorrelation > 0.2 and volumeDeltaProxy < 0
+float cBullCount = (cStatBull ? 1.0 : 0.0) + (cBandBull ? 1.0 : 0.0) + (cDonBull ? 1.0 : 0.0) + (cClimaxBull ? 1.0 : 0.0) + (cChannelBull ? 1.0 : 0.0) + (cProbabilityBull ? 1.0 : 0.0) + (cVwapBull ? 1.0 : 0.0) + (cRankBull ? 1.0 : 0.0) + (cCorrBull ? 1.0 : 0.0)
+float cBearCount = (cStatBear ? 1.0 : 0.0) + (cBandBear ? 1.0 : 0.0) + (cDonBear ? 1.0 : 0.0) + (cClimaxBear ? 1.0 : 0.0) + (cChannelBear ? 1.0 : 0.0) + (cProbabilityBear ? 1.0 : 0.0) + (cVwapBear ? 1.0 : 0.0) + (cRankBear ? 1.0 : 0.0) + (cCorrBear ? 1.0 : 0.0)
+float cBullScore = 100.0 * cBullCount / 9.0
+float cBearScore = 100.0 * cBearCount / 9.0
+ 
+// --- Regime-weighted ensemble and online logistic learner ---
+float trendFactor = math.min(1.0, math.max(0.0, (adx - 18.0) / 25.0))
+float rangeFactor = trendRegime ? 0.0 : 1.0
+float liquidityFactor = institutionalBull or institutionalBear or bBosBull or bBosBear ? 1.0 : 0.0
+float rawWeightA = 0.36 + 0.18 * trendFactor
+float rawWeightB = 0.36 + 0.18 * liquidityFactor
+float rawWeightC = 0.28 + 0.18 * rangeFactor
+float weightTotal = rawWeightA + rawWeightB + rawWeightC
+float weightA = rawWeightA / weightTotal
+float weightB = rawWeightB / weightTotal
+float weightC = rawWeightC / weightTotal
+float baseBull = weightA * aBullScore + weightB * bBullScore + weightC * cBullScore
+float baseBear = weightA * aBearScore + weightB * bBearScore + weightC * cBearScore
+float featureA = (aBullScore - aBearScore) / 100.0
+float featureB = (bBullScore - bBearScore) / 100.0
+float featureC = (cBullScore - cBearScore) / 100.0
+var float modelBias = 0.0
+var float modelWeightA = 0.0
+var float modelWeightB = 0.0
+var float modelWeightC = 0.0
+var float priorFeatureA = na
+var float priorFeatureB = na
+var float priorFeatureC = na
+var float priorProbability = na
+if barstate.isconfirmed and not na(priorProbability) and not na(close[1])
+    float observedUp = close > close[1] ? 1.0 : 0.0
+    float modelError = observedUp - priorProbability
+    modelBias += learningRate * modelError
+    modelWeightA += learningRate * modelError * priorFeatureA
+    modelWeightB += learningRate * modelError * priorFeatureB
+    modelWeightC += learningRate * modelError * priorFeatureC
+float modelLogit = modelBias + modelWeightA * featureA + modelWeightB * featureB + modelWeightC * featureC
+float boundedLogit = math.min(8.0, math.max(-8.0, modelLogit))
+float modelLongProbability = 1.0 / (1.0 + math.exp(-boundedLogit))
+if barstate.isconfirmed
+    priorFeatureA := featureA
+    priorFeatureB := featureB
+    priorFeatureC := featureC
+    priorProbability := modelLongProbability
+float masterLongScore = baseBull * 0.80 + modelLongProbability * 100.0 * 0.20
+float masterShortScore = baseBear * 0.80 + (1.0 - modelLongProbability) * 100.0 * 0.20
+float masterScore = math.max(masterLongScore, masterShortScore)
+int longAlignment = (aBullScore >= thresholdA ? 1 : 0) + (bBullScore >= thresholdB ? 1 : 0) + (cBullScore >= thresholdC ? 1 : 0)
+int shortAlignment = (aBearScore >= thresholdA ? 1 : 0) + (bBearScore >= thresholdB ? 1 : 0) + (cBearScore >= thresholdC ? 1 : 0)
+bool institutionalLongPass = not requireInstitutional or institutionalBull
+bool institutionalShortPass = not requireInstitutional or institutionalBear
+bool rawLong = masterLongScore >= adaptiveThreshold and masterLongScore > masterShortScore + 8 and longAlignment >= 2 and institutionalLongPass and antiChopPass and volatilityPass and sessionPass
+bool rawShort = masterShortScore >= adaptiveThreshold and masterShortScore > masterLongScore + 8 and shortAlignment >= 2 and institutionalShortPass and antiChopPass and volatilityPass and sessionPass
+ 
+// --- Confirmed signals and bounded signal history ---
+var int lastSignalBar = na
+var array<string> signalTimes = array.new_string()
+var array<string> signalEngines = array.new_string()
+var array<string> signalScores = array.new_string()
+var array<string> signalSides = array.new_string()
+bool cooldownPass = na(lastSignalBar) or bar_index - lastSignalBar >= cooldownBars
+bool buySignal = barstate.isconfirmed and cooldownPass and rawLong
+bool sellSignal = barstate.isconfirmed and cooldownPass and rawShort
+if buySignal or sellSignal
+    lastSignalBar := bar_index
+    bool longEvent = buySignal
+    float eventScore = longEvent ? masterLongScore : masterShortScore
+    string grade = f_grade(eventScore)
+    string engineText = longEvent ? (aBullScore >= thresholdA ? "A" : "") + (bBullScore >= thresholdB ? "B" : "") + (cBullScore >= thresholdC ? "C" : "") : (aBearScore >= thresholdA ? "A" : "") + (bBearScore >= thresholdB ? "B" : "") + (cBearScore >= thresholdC ? "C" : "")
+    array.unshift(signalTimes, str.format_time(time, "MM-dd HH:mm", syminfo.timezone))
+    array.unshift(signalEngines, engineText)
+    array.unshift(signalScores, str.tostring(math.round(eventScore)) + " " + grade)
+    array.unshift(signalSides, longEvent ? "BUY" : "SELL")
+    if array.size(signalTimes) > HISTORY_SIZE
+        array.pop(signalTimes)
+        array.pop(signalEngines)
+        array.pop(signalScores)
+        array.pop(signalSides)
+    if showMarkers
+        label.new(bar_index, longEvent ? low : high, (longEvent ? "BUY " : "SELL ") + grade, yloc=longEvent ? yloc.belowbar : yloc.abovebar, color=longEvent ? color.rgb(0, 150, 100) : color.rgb(210, 55, 70), style=longEvent ? label.style_label_up : label.style_label_down, textcolor=color.white, size=size.small)
+ 
+// --- Decision and dashboard ---
+float directionDelta = masterLongScore - masterShortScore
+string biasText = directionDelta >= 25 ? "STRONG BULL" : directionDelta >= 8 ? "BULL" : directionDelta <= -25 ? "STRONG BEAR" : directionDelta <= -8 ? "BEAR" : "NEUTRAL"
+string recommendation = rawLong ? (masterLongScore >= 85 ? "STRONG LONG" : "LONG") : rawShort ? (masterShortScore >= 85 ? "STRONG SHORT" : "SHORT") : "NEUTRAL"
+string liquidityText = bSweepBull ? "SELL-SIDE SWEEP" : bSweepBear ? "BUY-SIDE SWEEP" : institutionalBull ? "BULL ZONE REACTION" : institutionalBear ? "BEAR ZONE REACTION" : "NO CONFIRMATION"
+position dashPosition = dashboardPositionInput == "Top Left" ? position.top_left : dashboardPositionInput == "Bottom Right" ? position.bottom_right : dashboardPositionInput == "Bottom Left" ? position.bottom_left : position.top_right
+var table dashboard = table.new(dashPosition, 4, 15, bgcolor=color.rgb(12, 17, 27), frame_color=color.rgb(38, 58, 74), frame_width=1, border_color=color.rgb(30, 42, 55), border_width=1)
+if barstate.islast
+    table.cell(dashboard, 0, 0, "V01D AGI  //  ONLINE QUANT", text_color=color.aqua, bgcolor=color.rgb(9, 22, 32), text_size=size.small)
+    table.cell(dashboard, 1, 0, "LONG " + str.tostring(math.round(masterLongScore)), text_color=color.lime, bgcolor=color.rgb(9, 22, 32), text_size=size.small)
+    table.cell(dashboard, 2, 0, "SHORT " + str.tostring(math.round(masterShortScore)), text_color=color.red, bgcolor=color.rgb(9, 22, 32), text_size=size.small)
+    table.cell(dashboard, 3, 0, "THR " + str.tostring(math.round(adaptiveThreshold)), text_color=color.orange, bgcolor=color.rgb(9, 22, 32), text_size=size.small)
+    table.cell(dashboard, 0, 1, "ENGINE", text_color=color.gray, bgcolor=color.rgb(17, 25, 36), text_size=size.tiny)
+    table.cell(dashboard, 1, 1, "SCORE", text_color=color.gray, bgcolor=color.rgb(17, 25, 36), text_size=size.tiny)
+    table.cell(dashboard, 2, 1, "STATUS", text_color=color.gray, bgcolor=color.rgb(17, 25, 36), text_size=size.tiny)
+    table.cell(dashboard, 3, 1, "MARKET", text_color=color.gray, bgcolor=color.rgb(17, 25, 36), text_size=size.tiny)
+    bool aFired = (buySignal and aBullScore >= thresholdA) or (sellSignal and aBearScore >= thresholdA)
+    bool bFired = (buySignal and bBullScore >= thresholdB) or (sellSignal and bBearScore >= thresholdB)
+    bool cFired = (buySignal and cBullScore >= thresholdC) or (sellSignal and cBearScore >= thresholdC)
+    table.cell(dashboard, 0, 2, "A  VELOCITY", text_color=color.aqua, bgcolor=color.rgb(12, 17, 27), text_size=size.small)
+    table.cell(dashboard, 1, 2, str.tostring(math.round(math.max(aBullScore, aBearScore))), text_color=f_scoreColor(math.max(aBullScore, aBearScore)), bgcolor=color.rgb(12, 17, 27), text_size=size.small)
+    table.cell(dashboard, 2, 2, f_status(aBullScore, aBearScore, thresholdA, aFired), text_color=aFired ? color.lime : color.silver, bgcolor=color.rgb(12, 17, 27), text_size=size.tiny)
+    table.cell(dashboard, 3, 2, biasText, text_color=directionDelta >= 0 ? color.lime : color.red, bgcolor=color.rgb(12, 17, 27), text_size=size.tiny)
+    table.cell(dashboard, 0, 3, "B  STRUCTURE", text_color=color.aqua, bgcolor=color.rgb(12, 17, 27), text_size=size.small)
+    table.cell(dashboard, 1, 3, str.tostring(math.round(math.max(bBullScore, bBearScore))), text_color=f_scoreColor(math.max(bBullScore, bBearScore)), bgcolor=color.rgb(12, 17, 27), text_size=size.small)
+    table.cell(dashboard, 2, 3, f_status(bBullScore, bBearScore, thresholdB, bFired), text_color=bFired ? color.lime : color.silver, bgcolor=color.rgb(12, 17, 27), text_size=size.tiny)
+    table.cell(dashboard, 3, 3, liquidityText, text_color=institutionalBull ? color.lime : institutionalBear ? color.red : color.silver, bgcolor=color.rgb(12, 17, 27), text_size=size.tiny)
+    table.cell(dashboard, 0, 4, "C  STAT SNAP", text_color=color.aqua, bgcolor=color.rgb(12, 17, 27), text_size=size.small)
+    table.cell(dashboard, 1, 4, str.tostring(math.round(math.max(cBullScore, cBearScore))), text_color=f_scoreColor(math.max(cBullScore, cBearScore)), bgcolor=color.rgb(12, 17, 27), text_size=size.small)
+    table.cell(dashboard, 2, 4, f_status(cBullScore, cBearScore, thresholdC, cFired), text_color=cFired ? color.lime : color.silver, bgcolor=color.rgb(12, 17, 27), text_size=size.tiny)
+    table.cell(dashboard, 3, 4, volatilityText, text_color=extremeVol ? color.red : highVol ? color.orange : color.silver, bgcolor=color.rgb(12, 17, 27), text_size=size.tiny)
+    table.cell(dashboard, 0, 5, "REGIME", text_color=color.gray, bgcolor=color.rgb(17, 25, 36), text_size=size.tiny)
+    table.cell(dashboard, 1, 5, regimeText, text_color=trendRegime ? color.aqua : color.orange, bgcolor=color.rgb(17, 25, 36), text_size=size.tiny)
+    table.cell(dashboard, 2, 5, "DECISION", text_color=color.gray, bgcolor=color.rgb(17, 25, 36), text_size=size.tiny)
+    table.cell(dashboard, 3, 5, recommendation, text_color=rawLong ? color.lime : rawShort ? color.red : color.silver, bgcolor=color.rgb(12, 17, 27), text_size=size.tiny)
+    table.cell(dashboard, 0, 6, "RECENT SIGNALS", text_color=color.aqua, bgcolor=color.rgb(9, 22, 32), text_size=size.tiny)
+    table.cell(dashboard, 1, 6, "ENGINES", text_color=color.gray, bgcolor=color.rgb(9, 22, 32), text_size=size.tiny)
+    table.cell(dashboard, 2, 6, "SCORE / GRADE", text_color=color.gray, bgcolor=color.rgb(9, 22, 32), text_size=size.tiny)
+    table.cell(dashboard, 3, 6, "SIDE", text_color=color.gray, bgcolor=color.rgb(9, 22, 32), text_size=size.tiny)
+    for i = 0 to HISTORY_SIZE - 1
+        int rowIndex = 7 + i
+        bool hasEntry = i < array.size(signalTimes)
+        table.cell(dashboard, 0, rowIndex, hasEntry ? array.get(signalTimes, i) : "—", text_color=color.silver, bgcolor=color.rgb(12, 17, 27), text_size=size.tiny)
+        table.cell(dashboard, 1, rowIndex, hasEntry ? array.get(signalEngines, i) : "—", text_color=color.aqua, bgcolor=color.rgb(12, 17, 27), text_size=size.tiny)
+        table.cell(dashboard, 2, rowIndex, hasEntry ? array.get(signalScores, i) : "—", text_color=color.silver, bgcolor=color.rgb(12, 17, 27), text_size=size.tiny)
+        string savedSide = hasEntry ? array.get(signalSides, i) : "—"
+        table.cell(dashboard, 3, rowIndex, savedSide, text_color=savedSide == "BUY" ? color.lime : savedSide == "SELL" ? color.red : color.gray, bgcolor=color.rgb(12, 17, 27), text_size=size.tiny)
+ 
+// --- Confirmed signal markers and alerts ---
+plotshape(showMarkers and buySignal, title="V01D BUY", style=shape.triangleup, location=location.belowbar, color=color.lime, size=size.small)
+plotshape(showMarkers and sellSignal, title="V01D SELL", style=shape.triangledown, location=location.abovebar, color=color.red, size=size.small)
+alertcondition(buySignal, title="V01D AGI BUY", message="Confirmed V01D AGI BUY signal")
+alertcondition(sellSignal, title="V01D AGI SELL", message="Confirmed V01D AGI SELL signal")
