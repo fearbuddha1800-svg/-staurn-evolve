@@ -22,6 +22,7 @@ def test_hold_prevents_launches(tmp_path, marker):
 
 
 def test_invalid_config_prevents_launches(tmp_path):
+    (tmp_path / 'SYSTEM_AUTOSTART_ALLOWED').write_text('1')
     (tmp_path / 'config.json').write_text('{invalid')
     with patch.object(wd, 'BASE', str(tmp_path)), patch.object(wd, '_run_components') as run:
         with pytest.raises(json.JSONDecodeError):
@@ -83,7 +84,7 @@ def test_launch_strips_shadow_pythonpath(tmp_path):
 
 def test_one_component_failure_does_not_kill_others():
     seen = []
-    def launch(name):
+    def launch(name, args=()):
         seen.append(name)
         if name == 'daemon.py':
             raise SyntaxError('broken dependency')
@@ -91,4 +92,4 @@ def test_one_component_failure_does_not_kill_others():
         wd._run_components()
     assert 'manage.py' in seen
     assert 'cockpit.py' in seen
-    assert len(seen) == 6
+    assert len(seen) == 7
