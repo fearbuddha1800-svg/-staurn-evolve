@@ -1,0 +1,20 @@
+# Trading AI System — Graph Overview
+
+This canvas maps the full signal-relay trading system: channels → signals → neural labels → strategies → execution → MT5 demo.
+
+## Sections
+
+### Signal Ingestion
+[[Telegram-Channels]] → [[Dedupe-State]] → [[signals-db]]
+
+### Neural Pipeline
+[[neural-label-collector]] → [[neural-pipeline]] → [[verified-labels]] (gate: 300)
+
+### Strategy Execution
+[[strategy-registry]] → [[daemon]] → [[executor]] → [[broker-lifecycle]] → [[MT5-Demo-5057394166]]
+
+### Infrastructure
+[[watchdog]] → [[cockpit]] (:8490) → [[trade-relay]] (:8484)
+
+### Code Intelligence
+[[GitNexus-Index]] (4,472 nodes, 10,623 edges) → [[obsidian-vault]]

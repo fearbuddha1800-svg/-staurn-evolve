@@ -1,0 +1,50 @@
+---
+slug: gateway
+type: note
+graph: gitnexus
+---
+
+# Unified read-only edge; replaces cockpit.py on 8490 (do not run both).
+host: 127.0.0.1
+port: 8490
+health_interval: 15
+upstream_timeout: 3
+services:
+  cockpit:
+    kind: local
+    health_handler: health_data
+  strategies:
+    kind: local
+    health_handler: strategies_data
+  neural:
+    kind: local
+    health_handler: neural_data
+  luxalgo:
+    kind: local
+    health_handler: luxalgo_data
+  trade-relay:
+    kind: http
+    url: http://127.0.0.1:8484
+    health_path: /health
+    token_env: TRADE_RELAY_AGENT_TOKEN
+routes:
+  - path: /api/services/strategies
+    service: strategies
+    handler: strategies_data
+  - path: /api/services/neural
+    service: neural
+    handler: neural_data
+  - path: /api/services/luxalgo
+    service: luxalgo
+    handler: luxalgo_data
+  - path: /api/trade-relay
+    service: trade-relay
+    prefix: true
+    upstream_path: /api
+  - path: /api/cockpit
+    service: cockpit
+    prefix: true
+    upstream_path: /api
+
+## Links from
+- [[test_gateway]]

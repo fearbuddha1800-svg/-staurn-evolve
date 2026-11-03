@@ -550,6 +550,17 @@ def execute_algo(symbol, side, lot, sl, tp, msg_id=None, magic=ALGO_MAGIC,
         result["detail"] = f"stop validation failed: {bad}"
         _record(result, {"symbol": symbol, "action": side, "sl": sl, "tp": tp}, 0)
         return result
+    try:
+        import news_fetcher
+        news_reason = news_fetcher.block_reason(cfg)
+    except Exception as e:
+        news_reason = None
+        print(f"news filter unavailable (fail-open): {type(e).__name__}: {e}")
+    if news_reason:
+        result["status"] = "skipped_news_window"
+        result["detail"] = news_reason
+        _record(result, {"symbol": symbol, "action": side, "sl": sl, "tp": tp}, 0)
+        return result
     if dry_run:
         result["status"] = "dry_run_ok"
         return result
@@ -565,7 +576,7 @@ def execute_algo(symbol, side, lot, sl, tp, msg_id=None, magic=ALGO_MAGIC,
         "tp": tp or 0.0,
         "deviation": 30,
         "magic": magic,
-        "comment": comment[:31],
+        "comment": (f"{comment} {strategy_name}" if strategy_name else comment)[:31],
         "type_time": mt5.ORDER_TIME_GTC,
         "type_filling": _fill_type(sym),
     }
