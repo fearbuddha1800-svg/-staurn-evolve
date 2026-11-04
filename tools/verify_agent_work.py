@@ -25,7 +25,10 @@ CHECKS = {
                    "HybridMicrostructure"]),
     "ea-entry": ([sys.executable, "tools/ea_readiness.py",
                   "Hybrid_Microstructure_EA_V1.0.mq5"],
-                 ["Hybrid_Microstructure_EA_V1.0.mq5", "HybridMicrostructure"]),
+                 ["Hybrid_Microstructure_EA_V1.0.mq5",
+                  "HybridMicrostructure/ParamUX.mqh", "HybridMicrostructure/AIBridge.mqh",
+                  "HybridMicrostructure/AIBridgeUX.mqh",
+                  "HybridMicrostructure/AISignalsEngineFailClosed.mqh"]),
 }
 
 

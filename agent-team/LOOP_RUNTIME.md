@@ -1,13 +1,12 @@
 # Scheduled engineering lead
 
 Created loop: `b44fffbf-6aab-4511-a874-5ce664e6edbd`, named
-"MT5 engineering master (every 4 hours)". Creation and immediate-run requests
-were accepted, but the first launch reported "Cloud could not start this run.
-It retries on its own." The schedule remains enabled; successful scheduled
-execution is not yet established. Provider/model were set explicitly and a
-normal isolated child smoke check was launched to distinguish scheduling from
-worker provisioning. Check `room-cli loop list` for current status before claiming
-the scheduled system is running.
+"MT5 engineering master (every 4 hours)". The initial launch failed, then the
+immediate test started at 2026-11-04 18:19:13 UTC (runs=1, last_error=null).
+Next scheduled run: 2026-11-04 20:00 UTC. A separate isolated worker also verified
+the fresh-branch handoff and exposed an evidence-scope defect, since corrected.
+Run startup is verified; completed scheduled task delivery is not yet established.
+Check `room-cli loop list` for current status.
 
 Each fresh scheduled run acts as the root coordinator for that run. It may spawn
 at most three specialist children through Cloudroom; those children never spawn.
