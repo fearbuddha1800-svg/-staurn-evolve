@@ -6,7 +6,7 @@
     "tools/ea_readiness.py",
     "Hybrid_Microstructure_EA_V1.0.mq5"
   ],
-  "utc": "2026-11-04T18:16:08.072113+00:00",
+  "utc": "2026-11-04T18:17:41.276978+00:00",
   "exit_code": 0,
   "timed_out": false,
   "sources_before": {
@@ -14,7 +14,7 @@
     "HybridMicrostructure/AIBridge.mqh": "3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843",
     "HybridMicrostructure/AIBridgeUX.mqh": "538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a",
     "HybridMicrostructure/AISignalsEngine.mqh": "a481f7918421f6e60f2360de1b332e9bf5de97839ebc2c30a5544f7d303de4e7",
-    "HybridMicrostructure/AISignalsEngineFailClosed.mqh": "9f93bffd6954d344cecab5cfcf64d2a9cf79a9e9e603decf2c987d1c18bdf215",
+    "HybridMicrostructure/AISignalsEngineFailClosed.mqh": "0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169",
     "HybridMicrostructure/ParamUX.mqh": "ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06"
   },
   "sources_after": {
@@ -22,7 +22,7 @@
     "HybridMicrostructure/AIBridge.mqh": "3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843",
     "HybridMicrostructure/AIBridgeUX.mqh": "538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a",
     "HybridMicrostructure/AISignalsEngine.mqh": "a481f7918421f6e60f2360de1b332e9bf5de97839ebc2c30a5544f7d303de4e7",
-    "HybridMicrostructure/AISignalsEngineFailClosed.mqh": "9f93bffd6954d344cecab5cfcf64d2a9cf79a9e9e603decf2c987d1c18bdf215",
+    "HybridMicrostructure/AISignalsEngineFailClosed.mqh": "0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169",
     "HybridMicrostructure/ParamUX.mqh": "ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06"
   },
   "passed": true,

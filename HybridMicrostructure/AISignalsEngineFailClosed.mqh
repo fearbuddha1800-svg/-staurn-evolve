@@ -1,4 +1,4 @@
-// Standalone replacement for AISignalsEngine.mqh, not yet wired into the EA.
+// Fail-closed replacement for AISignalsEngine.mqh, included by the main EA.
 // Do not include both engines: they intentionally expose the same interface.
 // No inference backend has been implemented or validated.
 #ifndef HYBRID_AI_SIGNALS_ENGINE_FAIL_CLOSED_MQH
