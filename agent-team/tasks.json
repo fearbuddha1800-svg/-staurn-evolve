@@ -1,0 +1,82 @@
+[
+  {
+    "id": "controller",
+    "role": "orchestration",
+    "owned_paths": [
+      "tools/agent_master.py"
+    ],
+    "deps": [],
+    "acceptance": [
+      {
+        "id": "verification-report",
+        "path": "agent-team/verification/controller/report.json",
+        "sha256": null
+      }
+    ]
+  },
+  {
+    "id": "knowledge",
+    "role": "knowledge",
+    "owned_paths": [
+      "mql5-training/offline_pipeline.py"
+    ],
+    "deps": [],
+    "acceptance": [
+      {
+        "id": "verification-report",
+        "path": "agent-team/verification/knowledge/report.json",
+        "sha256": null
+      }
+    ]
+  },
+  {
+    "id": "ea-entry",
+    "role": "mql5",
+    "owned_paths": [
+      "Hybrid_Microstructure_EA_V1.0.mq5"
+    ],
+    "deps": [],
+    "acceptance": [
+      {
+        "id": "verification-report",
+        "path": "agent-team/verification/ea-entry/report.json",
+        "sha256": null
+      }
+    ]
+  },
+  {
+    "id": "native-compile",
+    "role": "mql5-compiler",
+    "owned_paths": [
+      "agent-team/verification/metaeditor"
+    ],
+    "deps": [
+      "ea-entry"
+    ],
+    "acceptance": [
+      {
+        "id": "compiler-log",
+        "path": "agent-team/verification/metaeditor/compile.log",
+        "sha256": null
+      }
+    ]
+  },
+  {
+    "id": "pine-parity",
+    "role": "pine-engineer",
+    "owned_paths": [
+      "tools/pine_parity_fixtures"
+    ],
+    "deps": [
+      "controller",
+      "knowledge"
+    ],
+    "acceptance": [
+      {
+        "id": "parity-evidence",
+        "path": "agent-team/verification/pine-parity/report.json",
+        "sha256": null
+      }
+    ]
+  }
+]

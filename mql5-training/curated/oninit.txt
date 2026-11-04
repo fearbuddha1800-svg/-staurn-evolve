@@ -1,0 +1,1 @@
+The integer-returning OnInit handler reports initialization success or failure. Zero indicates success. INIT_FAILED unloads an Expert Advisor from its chart; a failed indicator remains on the chart but does not receive event callbacks.

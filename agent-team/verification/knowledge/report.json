@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "check": "offline",
+  "command": [
+    "/home/cloudroom-agent/.local/share/quant-toolchain/venv/bin/python",
+    "-m",
+    "pytest",
+    "tools/test_ea_readiness.py",
+    "mql5-training/offline_tests",
+    "-q"
+  ],
+  "utc": "2026-11-04T18:12:47.632963+00:00",
+  "exit_code": 0,
+  "timed_out": false,
+  "sources_before": {
+    "tools/ea_readiness.py": "a36ee78e61a66f276abac584b88754ce1ab41757bf90bc07f7503a9a72b8f810",
+    "tools/test_ea_readiness.py": "90e4f4d15b393901afac9843f4b623ba70dee38af9f975a9e10fda1c0dc53fd8",
+    "mql5-training/offline_pipeline.py": "4bb3b7b149dca52b5e25afc025720da99bddb757757ba406b41c4d185b507b6c",
+    "mql5-training/offline_tests/test_pipeline.py": "ee66d1e1a7d8260f7cd017e53bc0e89b767c0e0dd17a705316f0b4c37c30a554",
+    "mql5-training/source_manifest.json": "aaba8ea5a7efce7d2724aa4ed96241b1eaaf6ef46d2965b7cf881390deff50a0",
+    "mql5-training/curated/copybuffer.txt": "b0166fa08fe3c17c0966dc00afb989b7dea8433170337dd19ab5b718ce315757",
+    "mql5-training/curated/ima.txt": "c79a7dad6a3c7b21a1e5122a593e0b9c3a10198e011ce7bed18b1de96edb9275",
+    "mql5-training/curated/indicatorrelease.txt": "f4498227c6c75bcd4da3b25195d35dc94fbdc3f9b979cca9254029fc801724ad",
+    "mql5-training/curated/oninit.txt": "5bd2a500c99585d695ee7a09378d686ed2814c1bdc2fe9698a98285aa0b29901"
+  },
+  "sources_after": {
+    "tools/ea_readiness.py": "a36ee78e61a66f276abac584b88754ce1ab41757bf90bc07f7503a9a72b8f810",
+    "tools/test_ea_readiness.py": "90e4f4d15b393901afac9843f4b623ba70dee38af9f975a9e10fda1c0dc53fd8",
+    "mql5-training/offline_pipeline.py": "4bb3b7b149dca52b5e25afc025720da99bddb757757ba406b41c4d185b507b6c",
+    "mql5-training/offline_tests/test_pipeline.py": "ee66d1e1a7d8260f7cd017e53bc0e89b767c0e0dd17a705316f0b4c37c30a554",
+    "mql5-training/source_manifest.json": "aaba8ea5a7efce7d2724aa4ed96241b1eaaf6ef46d2965b7cf881390deff50a0",
+    "mql5-training/curated/copybuffer.txt": "b0166fa08fe3c17c0966dc00afb989b7dea8433170337dd19ab5b718ce315757",
+    "mql5-training/curated/ima.txt": "c79a7dad6a3c7b21a1e5122a593e0b9c3a10198e011ce7bed18b1de96edb9275",
+    "mql5-training/curated/indicatorrelease.txt": "f4498227c6c75bcd4da3b25195d35dc94fbdc3f9b979cca9254029fc801724ad",
+    "mql5-training/curated/oninit.txt": "5bd2a500c99585d695ee7a09378d686ed2814c1bdc2fe9698a98285aa0b29901"
+  },
+  "passed": true,
+  "stdout_sha256": "c90552887b15f0dd338283c6b09a470ebacdbd4677c68174867fe21155a8b633",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "trust": "local execution record; not cryptographic attestation"
+}

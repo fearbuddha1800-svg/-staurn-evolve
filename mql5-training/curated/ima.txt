@@ -1,0 +1,1 @@
+MQL5 iMA takes six parameters and returns an indicator handle, not a moving-average price. Check for INVALID_HANDLE before reading the indicator. Read buffer values using CopyBuffer. Release a handle when it is no longer needed.

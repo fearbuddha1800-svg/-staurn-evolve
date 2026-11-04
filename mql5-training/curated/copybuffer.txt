@@ -1,0 +1,1 @@
+CopyBuffer reads values from an indicator handle. Start position zero refers to the current bar; position one selects the preceding bar. Check that the returned count matches the requested count before using values. Data may not yet be ready.

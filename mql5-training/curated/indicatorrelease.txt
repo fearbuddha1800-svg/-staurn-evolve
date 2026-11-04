@@ -1,0 +1,1 @@
+IndicatorRelease removes an indicator handle and frees its calculation block when no other user needs it. It returns a success flag. IndicatorRelease is not executed in the strategy tester.

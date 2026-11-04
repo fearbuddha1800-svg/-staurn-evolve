@@ -5,6 +5,14 @@ runtime and this checkout has been indexed. The bootstrap failure in the origina
 repair-order notes below is historical. MQL5 `OnTick` is still unresolved by the
 graph; Python impact queries work. See `CLOUD_TOOLCHAIN.md` for the verified setup.
 
+Subsequent supervised agent repairs restored missing inputs/bridge contracts and
+fixed the main EA's entry signatures, closed-bar MTF use, filter rejection and
+direction checks. It now includes the fail-closed engine; unavailable AI rejects
+initialization. The main EA passes the limited source triage, but still has no
+MetaEditor compilation or backtest evidence. Original findings below are retained
+as history; current repair evidence is in `tools/EA_REPAIR_NOTES.md` and
+`tools/EA_ENTRY_REPAIR.md`. ResearchFramework remains an invalid preserved draft.
+
 The requested product is not complete. Prior conversation claims of compilation,
 trained neural networks, working Pine strategy conversion, and ten-agent research
 execution are not supported by the copied source. Do not deploy these drafts.

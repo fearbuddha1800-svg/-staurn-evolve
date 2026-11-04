@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "ima",
+      "title": "iMA indicator handles",
+      "url": "https://www.mql5.com/en/docs/indicators/ima",
+      "path": "curated/ima.txt",
+      "sha256": "c79a7dad6a3c7b21a1e5122a593e0b9c3a10198e011ce7bed18b1de96edb9275",
+      "verified_on": "2026-11-04",
+      "content_kind": "authored_summary",
+      "rights": "Authored factual summary; upstream redistribution/training rights not established.",
+      "training_allowed": false
+    },
+    {
+      "id": "copybuffer",
+      "title": "CopyBuffer readiness and indexing",
+      "url": "https://www.mql5.com/en/docs/series/copybuffer",
+      "path": "curated/copybuffer.txt",
+      "sha256": "b0166fa08fe3c17c0966dc00afb989b7dea8433170337dd19ab5b718ce315757",
+      "verified_on": "2026-11-04",
+      "content_kind": "authored_summary",
+      "rights": "Authored factual summary; upstream redistribution/training rights not established.",
+      "training_allowed": false
+    },
+    {
+      "id": "indicatorrelease",
+      "title": "Indicator handle cleanup",
+      "url": "https://www.mql5.com/en/docs/series/indicatorrelease",
+      "path": "curated/indicatorrelease.txt",
+      "sha256": "f4498227c6c75bcd4da3b25195d35dc94fbdc3f9b979cca9254029fc801724ad",
+      "verified_on": "2026-11-04",
+      "content_kind": "authored_summary",
+      "rights": "Authored factual summary; upstream redistribution/training rights not established.",
+      "training_allowed": false
+    },
+    {
+      "id": "oninit",
+      "title": "Initialization result codes",
+      "url": "https://www.mql5.com/en/docs/event_handlers/oninit",
+      "path": "curated/oninit.txt",
+      "sha256": "5bd2a500c99585d695ee7a09378d686ed2814c1bdc2fe9698a98285aa0b29901",
+      "verified_on": "2026-11-04",
+      "content_kind": "authored_summary",
+      "rights": "Authored factual summary; upstream redistribution/training rights not established.",
+      "training_allowed": false
+    }
+  ]
+}

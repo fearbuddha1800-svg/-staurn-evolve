@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "check": "controller",
+  "command": [
+    "/home/cloudroom-agent/.local/share/quant-toolchain/venv/bin/python",
+    "-m",
+    "pytest",
+    "tools/test_agent_master.py",
+    "-q"
+  ],
+  "utc": "2026-11-04T18:12:47.450660+00:00",
+  "exit_code": 0,
+  "timed_out": false,
+  "sources_before": {
+    "tools/agent_master.py": "ba00b8078dcca9285b00d059f7d0e2a11b7009cdc35c7a604918edcfa696e036",
+    "tools/test_agent_master.py": "560cbdba0ae4a5a6b91cb46863738526325077d8108898ecbe6af2b00aeafa44"
+  },
+  "sources_after": {
+    "tools/agent_master.py": "ba00b8078dcca9285b00d059f7d0e2a11b7009cdc35c7a604918edcfa696e036",
+    "tools/test_agent_master.py": "560cbdba0ae4a5a6b91cb46863738526325077d8108898ecbe6af2b00aeafa44"
+  },
+  "passed": true,
+  "stdout_sha256": "79e4ba00e63fc08d8d512c2fa4b1016cef741ad8e43a8c7970419d5fd5578dff",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "trust": "local execution record; not cryptographic attestation"
+}
