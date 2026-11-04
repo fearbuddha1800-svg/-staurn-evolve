@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quant HQ — Research Workstation</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside class="rail">
+<a class="brand" href="#desk" aria-label="Quant HQ home">Q<span>↗</span>
+</a>
+<div class="rail-label">WORKSPACE</div>
+<nav aria-label="Workspace">
+<button data-view="desk" class="selected">01 <span>Command desk</span>
+</button>
+<button data-view="research">02 <span>Market research</span>
+</button>
+<button data-view="evidence">03 <span>Evidence lab</span>
+</button>
+</nav>
+<div class="rail-bottom">
+<span class="status-dot">
+</span> RESEARCH EDITION<br>
+<small>Interface prototype · offline</small>
+</div>
+</aside>
+<div class="shell">
+<header>
+<div class="crumb">QUANT HQ <span>/</span> HYBRID MICROSTRUCTURE</div>
+<div class="header-right">
+<span class="pill">DESIGN PROPOSAL</span>
+<span class="avatar">QH</span>
+</div>
+</header>
+<main>
+<div class="heading">
+<div>
+<div class="eyebrow">ENGINEERING WORKSPACE / 2026.11</div>
+<h1 id="page-title">Clarity before execution.</h1>
+<p>One workspace for strategy, risk, and the evidence behind every decision.</p>
+</div>
+<div class="mode">
+<label for="scenario">Display scenario</label>
+<select id="scenario">
+<option value="replay">Synthetic replay</option>
+<option value="missing">No data</option>
+<option value="stale">Stale data</option>
+</select>
+</div>
+</div>
+<div class="notice" id="notice" role="status">
+<span class="notice-mark">i</span>
+<span id="notice-text">Synthetic replay fixture. No live feed, broker connection, or order controls.</span>
+<strong>EXECUTION BLOCKED</strong>
+</div>
+<section id="desk" class="view">
+<div class="metrics">
+<div>
+<label>ACTIVE STRATEGY</label>
+<strong>Hybrid microstructure</strong>
+<small>Tick VWAP · sweep · snapback</small>
+</div>
+<div>
+<label>FEED STATE</label>
+<strong id="feed-state">Synthetic replay</strong>
+<small id="feed-detail">Illustrative price index, not market prices</small>
+</div>
+<div>
+<label>MODEL BACKEND</label>
+<strong class="amber">Unavailable</strong>
+<small>No validated model artifact</small>
+</div>
+<div>
+<label>RELEASE GATE</label>
+<strong>Awaiting compilation</strong>
+<small>Source triage ≠ native validation</small>
+</div>
+</div>
+<div class="workspace">
+<article class="chart-panel">
+<div class="panel-head">
+<div>
+<span class="eyebrow">STRATEGY REPLAY</span>
+<h2>XAUUSD <span>Illustrative normalized index</span>
+</h2>
+</div>
+<span class="tag">M15 · FIXTURE</span>
+</div>
+<div class="chart-wrap">
+<svg id="chart" viewBox="0 0 850 300" role="img" aria-label="Synthetic price replay and deviation bands, not live market data">
+<defs>
+<linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#c7ad6b" stop-opacity=".16"/>
+<stop offset="1" stop-color="#c7ad6b" stop-opacity="0"/>
+</linearGradient>
+</defs>
+<g id="plot">
+</g>
+</svg>
+<div class="chart-key">
+<span class="gold-dot">
+</span> Replay price <span class="gray-dot">
+</span> Illustrative VWAP bands <span class="right">NO LIVE DATA</span>
+</div>
+</div>
+<div class="replay-controls">
+<label for="replay">Replay bar <strong id="bar-number">48</strong>
+</label>
+<input id="replay" type="range" min="8" max="60" value="48">
+<span>60 fixture bars</span>
+</div>
+</article>
+<aside class="decision">
+<div class="eyebrow">DECISION INSPECTOR</div>
+<h2>Hold. Here’s why.</h2>
+<div class="decision-status">
+<span class="square">
+</span> No executable intent</div>
+<ol>
+<li>
+<span class="step">01</span>
+<div>
+<strong>Source integrity</strong>
+<p>Display scenarios are illustrative. No connected source can authorize a live order.</p>
+</div>
+</li>
+<li>
+<span class="step">02</span>
+<div>
+<strong>Model validation</strong>
+<p>No validated backend. Confidence is unavailable.</p>
+</div>
+</li>
+<li>
+<span class="step">03</span>
+<div>
+<strong>Native compilation</strong>
+<p>MetaEditor verification is still outstanding.</p>
+</div>
+</li>
+</ol>
+<button class="outline" id="inspect">Inspect evidence <span>↗</span>
+</button>
+</aside>
+</div>
+<div class="lower-grid">
+<article>
+<div class="section-title">
+<h2>Signal → decision → outcome</h2>
+<span class="muted">Proposed event contract</span>
+</div>
+<div class="flow">
+<div>
+<b>01</b> Source<span>Identity + receipt time</span>
+</div>
+<i>→</i>
+<div>
+<b>02</b> Strategy<span>Closed-bar decision</span>
+</div>
+<i>→</i>
+<div>
+<b>03</b> Risk gate<span>Deterministic verdict</span>
+</div>
+<i>→</i>
+<div class="blocked">
+<b>04</b> Execution<span>Blocked without evidence</span>
+</div>
+</div>
+</article>
+<article class="focus">
+<span class="eyebrow">NEXT ENGINEERING MILESTONE</span>
+<h2>Prove Pine → MT5 parity.</h2>
+<p>Compare identical inputs and signal timestamps. Record every mismatch before optimizing returns.</p>
+<button data-view="evidence" class="text-button">View acceptance gates →</button>
+</article>
+</div>
+</section>
+<section id="research" class="view" hidden>
+<div class="section-title">
+<h2>Public Market study</h2>
+<span class="tag">12 LISTINGS · PURPOSIVE SAMPLE</span>
+</div>
+<p class="section-intro">Seller descriptions describe features. They do not verify implementation, safety, or profitability. These examples inform workflows, not purchase decisions.</p>
+<div class="research-grid">
+<article>
+<span class="eyebrow">TRADE PLANNING</span>
+<h2>Risk before entry</h2>
+<p>Chart-level planning, monetary risk previews, partial exits and presets are advertised in sampled trade managers.</p>
+<a href="https://www.mql5.com/en/market/product/202369" target="_blank" rel="noopener noreferrer">CM Trade Manager · source ↗</a>
+</article>
+<article>
+<span class="eyebrow">SIGNAL DISCOVERY</span>
+<h2>A scanner, with timing</h2>
+<p>Multi-timeframe cells need a clear distinction between forming signals, confirmed bars and unavailable data.</p>
+<a href="https://www.mql5.com/en/market/product/124946" target="_blank" rel="noopener noreferrer">RSI Kernel Scanner · source ↗</a>
+</article>
+<article>
+<span class="eyebrow">AI SYSTEMS</span>
+<h2>Make model boundaries visible</h2>
+<p>Cloud-AI listings advertise provider integrations. Model identity, outage handling and comparable backtests still require verification.</p>
+<a href="https://www.mql5.com/en/market/product/175271" target="_blank" rel="noopener noreferrer">Unlocked AI · source ↗</a>
+</article>
+</div>
+<div class="proposal">
+<span class="eyebrow">OUR PRODUCT HYPOTHESIS</span>
+<h2>Sell an auditable workflow.</h2>
+<p>Source-linked signals, explicit risk limits, reproducible strategy evidence, and honest degraded states. Validate demand before treating this as a market gap.</p>
+</div>
+</section>
+<section id="evidence" class="view" hidden>
+<div class="section-title">
+<h2>Release evidence</h2>
+<span class="muted">Current project checkpoint · not live telemetry</span>
+</div>
+<table>
+<thead>
+<tr>
+<th>Gate</th>
+<th>Evidence</th>
+<th>State</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Offline controller</td>
+<td>Claim, dependency and review tests</td>
+<td>
+<span class="good">TESTED OFFLINE</span>
+</td>
+</tr>
+<tr>
+<td>Main EA source triage</td>
+<td>Include/input checker only; not a compiler</td>
+<td>
+<span class="good">SOURCE CHECKED</span>
+</td>
+</tr>
+<tr>
+<td>Native MT5 compilation</td>
+<td>MetaEditor log + exact EX5 hash required</td>
+<td>
+<span class="amber">BLOCKED</span>
+</td>
+</tr>
+<tr>
+<td>Pine signal parity</td>
+<td>Matched bars, timestamps, settings and tolerances</td>
+<td>
+<span class="amber">UNPROVEN</span>
+</td>
+</tr>
+<tr>
+<td>AI inference</td>
+<td>Versioned model, chronology and export parity</td>
+<td>
+<span class="amber">UNAVAILABLE</span>
+</td>
+</tr>
+<tr>
+<td>Live trading</td>
+<td>Separate controlled validation and activation</td>
+<td>
+<span class="muted">DISABLED</span>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="proposal">
+<h2>No evidence, no promotion.</h2>
+<p>Source checks do not imply compilation. A backtest does not imply live performance. Missing data never becomes a zero-risk or healthy state.</p>
+</div>
+</section>
+<footer>
+<span>QUANT HQ / INTERFACE RESEARCH</span>
+<span>Independent design proposal · synthetic chart · no backend connection</span>
+</footer>
+</main>
+</div>
+<script src="prototype.js">
+</script>
+</body>
+</html>

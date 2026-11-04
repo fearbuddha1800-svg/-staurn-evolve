@@ -6,3 +6,11 @@
 4. Subsequent work requires explicit root task/file leases: backend validation, risk/execution, offline Hermes ingestion and measured strategy testing. No runtime activation.
 
 For each run append a concise task ID, revision/hashes, state, evidence paths, blocker and next action to the canonical checkpoint through root integration. Do not silently reset statuses from a missing local database. Root owns the machine-readable task spec and evidence directories.
+
+## Research handoff
+
+Read research/market_scan/RESEARCH_BRIEF.md and DEVELOPMENT_BACKLOG.md before
+new strategy/UI/model work. The scan covers 12 public listings and six engineering
+references; it does not establish competitor runtime behavior or profitability.
+Preserve the current Pine-parity/native-compile gates. The rendered design is an
+offline proposal, not a connected replacement for the existing dashboard.

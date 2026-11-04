@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "access_date": "2026-11-04",
+  "purpose": "Public product and usability research; no investment recommendation or profitability ranking.",
+  "sampling": "Purposive English-language public MT5 listings; 12 products, not a representative census.",
+  "evidence_policy": "Public metadata and short authored notes only. Web responses may be cached; access date is retrieval date, not a certification of live inventory.",
+  "excluded_candidate": {
+    "url": "https://www.mql5.com/en/market/product/197362",
+    "reason": "AI Gold Trader appeared in search but direct open redirected to MT5 Experts category; excluded from 12-product sample."
+  },
+  "platform_sources": [
+    {
+      "id": "market_rules",
+      "url": "https://www.mql5.com/en/market/rules",
+      "access_date": "2026-11-04",
+      "verified_platform_fact": "I.9-10 and V.1-8: automatic formal testing is not a profitability or error-free-operation guarantee; paid EA demos trade only in Strategy Tester and indicator demos use visual testing. IV.6-10 restrict external licensing, personal-data collection, duplicate products and off-site support links."
+    },
+    {
+      "id": "validation_checks",
+      "url": "https://www.mql5.com/en/articles/2555",
+      "access_date": "2026-11-04",
+      "verified_platform_fact": "MetaQuotes describes checks for funds, volume, pending-order/lot limits, stops/freeze levels, insufficient history, runtime errors and CPU/memory use."
+    },
+    {
+      "id": "webrequest",
+      "url": "https://www.mql5.com/en/docs/network/webrequest",
+      "access_date": "2026-11-04",
+      "verified_platform_fact": "WebRequest needs URL allowlisting, is synchronous, is callable from EAs/scripts rather than indicators, and cannot execute in Strategy Tester. This does not establish which transport a product actually uses."
+    }
+  ],
+  "products": [
+    {
+      "product_id": 202369,
+      "name": "CM Trade Manager",
+      "url": "https://www.mql5.com/en/market/product/202369",
+      "access_date": "2026-11-04",
+      "platform": "MetaTrader 5",
+      "market_category": "Utilities",
+      "research_segment": "risk/trade manager",
+      "evidence_method": "Official public listing opened via web tool; seller description manually summarized.",
+      "verified_listing_fact": "Public page identifies this product in MetaTrader 5 / Utilities; this verifies listing metadata only.",
+      "seller_advertised_features": "Chart order panel; four presets per symbol, up to three targets; monetary risk estimate excludes commission.",
+      "usability_observation": "Pre-entry preview, saved presets and movable toolbox reduce window switching.",
+      "unknown": "Risk accuracy across contract specifications; partial-order failure handling.",
+      "verified_runtime_behavior": false,
+      "platform_fact_refs": [
+        "market_rules"
+      ],
+      "evidence_limit": "No installation, purchase, account access, source inspection or runtime verification."
+    },
+    {
+      "product_id": 96621,
+      "name": "Trade Manager Interface MT5",
+      "url": "https://www.mql5.com/en/market/product/96621",
+      "access_date": "2026-11-04",
+      "platform": "MetaTrader 5",
+      "market_category": "Utilities",
+      "research_segment": "risk/trade manager",
+      "evidence_method": "Official public listing opened via web tool; seller description manually summarized.",
+      "verified_listing_fact": "Public page identifies this product in MetaTrader 5 / Utilities; this verifies listing metadata only.",
+      "seller_advertised_features": "Visual trade planning, automatic sizing, partial targets, breakeven and trailing.",
+      "usability_observation": "Free entry point and chart-first workflow; manual link advertised.",
+      "unknown": "Actual sizing correctness, restart recovery and account-mode behavior.",
+      "verified_runtime_behavior": false,
+      "platform_fact_refs": [
+        "market_rules"
+      ],
+      "evidence_limit": "No installation, purchase, account access, source inspection or runtime verification."
+    },
+    {
+      "product_id": 199742,
+      "name": "Trade Manager Full Risk Management Pro",
+      "url": "https://www.mql5.com/en/market/product/199742",
+      "access_date": "2026-11-04",
+      "platform": "MetaTrader 5",
+      "market_category": "Utilities",
+      "research_segment": "risk/trade manager",
+      "evidence_method": "Official public listing opened via web tool; seller description manually summarized.",
+      "verified_listing_fact": "Public page identifies this product in MetaTrader 5 / Utilities; this verifies listing metadata only.",
+      "seller_advertised_features": "Account-wide management; stop tightening, profit-conditioned volume reduction, daily loss controls and magic-number filters.",
+      "usability_observation": "One chart controls multiple symbols; feature toggles and scope filters.",
+      "unknown": "Interaction with other EAs; loss-limit gaps, fees and restart persistence.",
+      "verified_runtime_behavior": false,
+      "platform_fact_refs": [
+        "market_rules"
+      ],
+      "evidence_limit": "No installation, purchase, account access, source inspection or runtime verification."
+    },
+    {
+      "product_id": 124946,
+      "name": "RSI Kernel Optimized with Scanner for MT5",
+      "url": "https://www.mql5.com/en/market/product/124946",
+      "access_date": "2026-11-04",
+      "platform": "MetaTrader 5",
+      "market_category": "Indicators",
+      "research_segment": "MTF scanner",
+      "evidence_method": "Official public listing opened via web tool; seller description manually summarized.",
+      "verified_listing_fact": "Public page identifies this product in MetaTrader 5 / Indicators; this verifies listing metadata only.",
+      "seller_advertised_features": "RSI pivot distributions with KDE; multi-symbol/timeframe panel and alerts; pivots require confirmation bars.",
+      "usability_observation": "Explicit forming-bar caveat; separate timeframe parameters and linked scanner guide.",
+      "unknown": "Repainting behavior in operation, alert latency and large-watchlist resource use.",
+      "verified_runtime_behavior": false,
+      "platform_fact_refs": [
+        "market_rules"
+      ],
+      "evidence_limit": "No installation, purchase, account access, source inspection or runtime verification."
+    },
+    {
+      "product_id": 204821,
+      "name": "VR Scanner",
+      "url": "https://www.mql5.com/en/market/product/204821",
+      "access_date": "2026-11-04",
+      "platform": "MetaTrader 5",
+      "market_category": "Utilities",
+      "research_segment": "MTF scanner",
+      "evidence_method": "Official public listing opened via web tool; seller description manually summarized.",
+      "verified_listing_fact": "Public page identifies this product in MetaTrader 5 / Utilities; this verifies listing metadata only.",
+      "seller_advertised_features": "Bollinger Bands, relative volume and RSI confluence; up to 12 Market Watch assets and seven timeframes.",
+      "usability_observation": "One-screen matrix replaces repeated chart switching.",
+      "unknown": "Volume semantics across brokers; signal validity and measured scanning latency.",
+      "verified_runtime_behavior": false,
+      "platform_fact_refs": [
+        "market_rules"
+      ],
+      "evidence_limit": "No installation, purchase, account access, source inspection or runtime verification."
+    },
+    {
+      "product_id": 68951,
+      "name": "Local Trade Copier EA MT5",
+      "url": "https://www.mql5.com/en/market/product/68951",
+      "access_date": "2026-11-04",
+      "platform": "MetaTrader 5",
+      "market_category": "Utilities",
+      "research_segment": "copying utility",
+      "evidence_method": "Official public listing opened via web tool; seller description manually summarized.",
+      "verified_listing_fact": "Public page identifies this product in MetaTrader 5 / Utilities; this verifies listing metadata only.",
+      "seller_advertised_features": "Same-Windows-PC/VPS copying; 18 sizing/risk options, symbol mapping, filters and receiver protection.",
+      "usability_observation": "Transmitter/Receiver roles and receiver-specific settings expose scope clearly.",
+      "unknown": "Execution latency, reconnect idempotency and broker/account compatibility in practice.",
+      "verified_runtime_behavior": false,
+      "platform_fact_refs": [
+        "market_rules"
+      ],
+      "evidence_limit": "No installation, purchase, account access, source inspection or runtime verification."
+    },
+    {
+      "product_id": 179771,
+      "name": "Breakout S1 or R1 Pivot Daily EURUSD",
+      "url": "https://www.mql5.com/en/market/product/179771",
+      "access_date": "2026-11-04",
+      "platform": "MetaTrader 5",
+      "market_category": "Experts",
+      "research_segment": "conventional EA",
+      "evidence_method": "Official public listing opened via web tool; seller description manually summarized.",
+      "verified_listing_fact": "Public page identifies this product in MetaTrader 5 / Experts; this verifies listing metadata only.",
+      "seller_advertised_features": "Daily S1/R1 pivot pending entries conditioned on previous daily candle; EURUSD with M15 default test settings.",
+      "usability_observation": "Narrow symbol/timeframe instructions make setup boundaries visible.",
+      "unknown": "Robustness outside seller tests; trading-day timezone and execution assumptions.",
+      "verified_runtime_behavior": false,
+      "platform_fact_refs": [
+        "market_rules"
+      ],
+      "evidence_limit": "No installation, purchase, account access, source inspection or runtime verification."
+    },
+    {
+      "product_id": 107970,
+      "name": "Eurusd Breakout",
+      "url": "https://www.mql5.com/en/market/product/107970",
+      "access_date": "2026-11-04",
+      "platform": "MetaTrader 5",
+      "market_category": "Experts",
+      "research_segment": "conventional EA",
+      "evidence_method": "Official public listing opened via web tool; seller description manually summarized.",
+      "verified_listing_fact": "Public page identifies this product in MetaTrader 5 / Experts; this verifies listing metadata only.",
+      "seller_advertised_features": "EURUSD H1 trend-following pending orders; adjustable risk and Friday UTC closure.",
+      "usability_observation": "Clear chart timeframe and weekly shutdown policy.",
+      "unknown": "News-event resilience, slippage and robustness of claimed results.",
+      "verified_runtime_behavior": false,
+      "platform_fact_refs": [
+        "market_rules"
+      ],
+      "evidence_limit": "No installation, purchase, account access, source inspection or runtime verification."
+    },
+    {
+      "product_id": 161173,
+      "name": "Gold Momentum AI",
+      "url": "https://www.mql5.com/en/market/product/161173",
+      "access_date": "2026-11-04",
+      "platform": "MetaTrader 5",
+      "market_category": "Experts",
+      "research_segment": "XAUUSD automation; AI labeled",
+      "evidence_method": "Official public listing opened via web tool; seller description manually summarized.",
+      "verified_listing_fact": "Public page identifies this product in MetaTrader 5 / Experts; this verifies listing metadata only.",
+      "seller_advertised_features": "XAUUSD H1 momentum and adaptive volatility; fixed or percentage sizing.",
+      "usability_observation": "Simple H1 attachment and deposit/VPS guidance.",
+      "unknown": "AI architecture is unspecified; stable operation and broker independence are unverified.",
+      "verified_runtime_behavior": false,
+      "platform_fact_refs": [
+        "market_rules"
+      ],
+      "evidence_limit": "No installation, purchase, account access, source inspection or runtime verification."
+    },
+    {
+      "product_id": 194000,
+      "name": "My AI Gold",
+      "url": "https://www.mql5.com/en/market/product/194000",
+      "access_date": "2026-11-04",
+      "platform": "MetaTrader 5",
+      "market_category": "Experts",
+      "research_segment": "XAUUSD automation; AI labeled",
+      "evidence_method": "Official public listing opened via web tool; seller description manually summarized.",
+      "verified_listing_fact": "Public page identifies this product in MetaTrader 5 / Experts; this verifies listing metadata only.",
+      "seller_advertised_features": "Custom neural-network gold system; embedded parameters, risk profiles, SL/TP; claims no grid or martingale.",
+      "usability_observation": "Attach-and-select-risk pitch; H1 recommendation appears alongside any-timeframe setup wording.",
+      "unknown": "Model/training provenance, leakage controls, broker sensitivity and linked performance attribution.",
+      "verified_runtime_behavior": false,
+      "platform_fact_refs": [
+        "market_rules"
+      ],
+      "evidence_limit": "No installation, purchase, account access, source inspection or runtime verification."
+    },
+    {
+      "product_id": 175271,
+      "name": "Unlocked AI MT5 Gold Scalping Intraday Swing EA",
+      "url": "https://www.mql5.com/en/market/product/175271",
+      "access_date": "2026-11-04",
+      "platform": "MetaTrader 5",
+      "market_category": "Experts",
+      "research_segment": "XAUUSD automation; cloud AI",
+      "evidence_method": "Official public listing opened via web tool; seller description manually summarized.",
+      "verified_listing_fact": "Public page identifies this product in MetaTrader 5 / Experts; this verifies listing metadata only.",
+      "seller_advertised_features": "Independent DeepSeek cloud decision engine and local H1 breakout; timeframe-selected modes and confidence gate.",
+      "usability_observation": "Independent engine toggles and dashboard explanations; chart timeframe changes operating mode.",
+      "unknown": "API cost/privacy, outage safety, confidence calibration and reproducible AI-path testing.",
+      "verified_runtime_behavior": false,
+      "platform_fact_refs": [
+        "market_rules",
+        "webrequest"
+      ],
+      "evidence_limit": "No installation, purchase, account access, source inspection or runtime verification."
+    },
+    {
+      "product_id": 167360,
+      "name": "Sentinel X Gold EA with AI Analysis MT5",
+      "url": "https://www.mql5.com/en/market/product/167360",
+      "access_date": "2026-11-04",
+      "platform": "MetaTrader 5",
+      "market_category": "Experts",
+      "research_segment": "XAUUSD automation; cloud AI",
+      "evidence_method": "Official public listing opened via web tool; seller description manually summarized.",
+      "verified_listing_fact": "Public page identifies this product in MetaTrader 5 / Experts; this verifies listing metadata only.",
+      "seller_advertised_features": "Local H1 breakout plus optional OpenAI analysis; separate magic numbers, ATR controls, daily pause and dashboard.",
+      "usability_observation": "Engine identity in trade history and visible session/regime state aid diagnosis.",
+      "unknown": "Model drift, API failure behavior and whether backtests represent the enabled live AI path.",
+      "verified_runtime_behavior": false,
+      "platform_fact_refs": [
+        "market_rules",
+        "webrequest"
+      ],
+      "evidence_limit": "No installation, purchase, account access, source inspection or runtime verification."
+    }
+  ]
+}

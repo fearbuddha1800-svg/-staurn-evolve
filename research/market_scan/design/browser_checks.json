@@ -1,0 +1,18 @@
+[
+  {
+    "check": "research navigation",
+    "passed": true
+  },
+  {
+    "check": "evidence navigation",
+    "passed": true
+  },
+  {
+    "check": "stale state clears chart and disables replay",
+    "passed": true
+  },
+  {
+    "check": "mobile horizontal fit",
+    "passed": true
+  }
+]
