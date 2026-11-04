@@ -29,6 +29,9 @@ def inspect(root: Path, entry: Path) -> dict:
             return
         if not path.is_relative_to(root):
             raise ValueError("Source path escapes project root")
+        if not path.is_file():
+            issue(path, "missing_source", "Source file is absent from this checkout")
+            return
         source = strip_comments(path.read_text(encoding="utf-8-sig"))
         sources[path] = source
         for delimiter, include in re.findall(r'#include\s*([<"])([^>"\n]+)[>"]', source):

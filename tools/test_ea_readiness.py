@@ -7,6 +7,14 @@ from ea_readiness import inspect
 
 
 class ReadinessTests(unittest.TestCase):
+    def test_missing_entry_is_blocked_not_a_compiler_success(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            result = inspect(root, root / "absent.mq5")
+        self.assertEqual(result["status"], "blocked")
+        self.assertEqual(result["findings"][0]["code"], "missing_source")
+        self.assertFalse(result["compiled"])
+
     def check_source(self, source: str, include: str | None = None) -> dict:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
