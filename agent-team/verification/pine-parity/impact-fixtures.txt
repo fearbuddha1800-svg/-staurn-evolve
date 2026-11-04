@@ -1,0 +1,11 @@
+
+  GitNexus Impact (1.6.12)
+{
+  "error": "Target 'tools/pine_parity_fixtures' not found",
+  "target": {
+    "name": "tools/pine_parity_fixtures"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}

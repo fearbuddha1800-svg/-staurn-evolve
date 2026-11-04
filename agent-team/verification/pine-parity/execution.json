@@ -1,0 +1,68 @@
+{
+  "utc": "2026-11-04T18:24:19.885035+00:00",
+  "base_revision": "83d1e1f",
+  "configuration": "Synthetic UTC bars, SMA(2), 60-second LTF, 180-second supplied HTF, reset on gap/null/session; no runtime activation",
+  "runs": [
+    {
+      "command": [
+        "python",
+        "-m",
+        "pytest",
+        "tools/pine_parity_fixtures/test_contract.py",
+        "tools/test_verify_agent_work.py",
+        "-q"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "fc4bdbc306a5cd8229bd86fe73dad4927cb19b1f79f8884e3c7fff5dcb539bcc",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "ruff",
+        "check",
+        "tools/pine_parity_fixtures",
+        "tools/verify_agent_work.py"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "compileall",
+        "-q",
+        "tools/pine_parity_fixtures",
+        "tools/verify_agent_work.py"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "versions": {
+    "python": "Python 3.11.2",
+    "ruff": "ruff 0.17.3",
+    "rtk": "rtk 0.30.0",
+    "gitnexus": "1.6.12"
+  },
+  "files_sha256": {
+    "tools/pine_parity_fixtures/README.md": "408adbf08ab819b3882505739d553fc81f25e9046bf4ec6b2af36342f29c4a63",
+    "tools/pine_parity_fixtures/contract.py": "a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e",
+    "tools/pine_parity_fixtures/test_contract.py": "022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa",
+    "tools/pine_parity_fixtures/cases.json": "46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c",
+    "tools/verify_agent_work.py": "8ffaacf2637f0365714af5fb1f4c0b2bbaae6a5b83594f11386cf094225f2c74"
+  },
+  "limitations": [
+    "Synthetic oracle only; no Pine or MQL runtime outputs",
+    "Python compileall is not MetaEditor compilation",
+    "Graph analysis has cross-language and capped-process limitations; UNKNOWN is not an all-clear"
+  ],
+  "dependency_hash_audit": {
+    "controller": "all 2 source hashes match",
+    "knowledge": "all 9 source hashes match",
+    "ea-entry": "prior report stale: HybridMicrostructure/AISignalsEngine.mqh differs; preserved original report; fresh static check retained in ea-static-refresh"
+  },
+  "review": "independent-review.txt: ACCEPT bounded offline scope, no blocking findings"
+}

@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "check": "ea-entry",
+  "command": [
+    "/tmp/mt5-python/bin/python",
+    "tools/ea_readiness.py",
+    "Hybrid_Microstructure_EA_V1.0.mq5"
+  ],
+  "utc": "2026-11-04T18:24:02.634673+00:00",
+  "exit_code": 0,
+  "timed_out": false,
+  "sources_before": {
+    "Hybrid_Microstructure_EA_V1.0.mq5": "70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f",
+    "HybridMicrostructure/AIBridge.mqh": "3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843",
+    "HybridMicrostructure/AIBridgeUX.mqh": "538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a",
+    "HybridMicrostructure/AISignalsEngineFailClosed.mqh": "0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169",
+    "HybridMicrostructure/ParamUX.mqh": "ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06"
+  },
+  "sources_after": {
+    "Hybrid_Microstructure_EA_V1.0.mq5": "70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f",
+    "HybridMicrostructure/AIBridge.mqh": "3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843",
+    "HybridMicrostructure/AIBridgeUX.mqh": "538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a",
+    "HybridMicrostructure/AISignalsEngineFailClosed.mqh": "0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169",
+    "HybridMicrostructure/ParamUX.mqh": "ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06"
+  },
+  "passed": true,
+  "stdout_sha256": "b4dbe985a9c80ff64e08ee8e90b2cfc961b7491fb08904dcda6b6ffabb53044c",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "trust": "local execution record; not cryptographic attestation"
+}

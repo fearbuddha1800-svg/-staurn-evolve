@@ -1,0 +1,20 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 29 files, 13 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Section Scheduled engineering lead → agent-team/LOOP_RUNTIME.md
+  Section Canonical engineering checkpoint → agent-team/STATUS.md
+  Section Cross-run worklist → agent-team/WORKLIST.md
+  Section Offline parity contract fixtures → tools/pine_parity_fixtures/README.md
+  Function evaluate → tools/pine_parity_fixtures/contract.py
+  Property window → tools/pine_parity_fixtures/contract.py
+  Property previous → tools/pine_parity_fixtures/contract.py
+  Property prior_bar → tools/pine_parity_fixtures/contract.py
+  Variable CASES → tools/pine_parity_fixtures/test_contract.py
+  Function test_expected_records → tools/pine_parity_fixtures/test_contract.py
+  Function test_future_data_cannot_change_records → tools/pine_parity_fixtures/test_contract.py
+  Function test_fixture_coverage → tools/pine_parity_fixtures/test_contract.py
+  Variable CHECKS → tools/verify_agent_work.py

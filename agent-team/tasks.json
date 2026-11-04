@@ -75,8 +75,45 @@
       {
         "id": "parity-evidence",
         "path": "agent-team/verification/pine-parity/report.json",
-        "sha256": null
+        "sha256": "e704744be66745668ca80f7de2da51d9929c7e952f69f48242ef5b30e994441c"
+      },
+      {
+        "id": "bounded-fixture-execution",
+        "path": "agent-team/verification/pine-parity/execution.json",
+        "sha256": "529ec9e634c81b40f18ead597bffb753b98a2afc2cf6c6a5832bcd72a930e897"
       }
-    ]
+    ],
+    "state": "blocked",
+    "lease": {
+      "owner": "root:b44fffbf",
+      "base_revision": "83d1e1f",
+      "deadline_utc": "2026-11-04T18:37:00Z",
+      "exact_files": [
+        "tools/pine_parity_fixtures/README.md",
+        "tools/pine_parity_fixtures/contract.py",
+        "tools/pine_parity_fixtures/cases.json",
+        "tools/pine_parity_fixtures/test_contract.py",
+        "tools/verify_agent_work.py",
+        "agent-team/tasks.json",
+        "agent-team/STATUS.md",
+        "agent-team/WORKLIST.md",
+        "agent-team/LOOP_RUNTIME.md",
+        "agent-team/verification/pine-parity/"
+      ],
+      "new_files_base_hash": null,
+      "existing_source_sha256": {
+        "tools/verify_agent_work.py": "d41eed85974de9e45b16d4cda5d00f9306645831760c50561db96fa889783597"
+      },
+      "acceptance_commands": [
+        "python tools/verify_agent_work.py pine-fixtures",
+        "python -m pytest tools/test_verify_agent_work.py -q",
+        "ruff check tools/pine_parity_fixtures tools/verify_agent_work.py"
+      ],
+      "released": true,
+      "reviewer": "cr_child_b4f363d1c9d347b6ba0db958 (read-only; /tmp/mt5-independent-review.txt)"
+    },
+    "fixture_state": "done",
+    "blocker": "Actual Pine and MQL runtime exports absent; synthetic fixture acceptance does not establish parity.",
+    "next_action": "Run matching Pine/MQL implementations against the seven-case contract and retain real export/compiler output."
   }
 ]

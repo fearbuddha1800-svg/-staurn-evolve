@@ -13,6 +13,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKS = {
+    "pine-fixtures": ([sys.executable, "-m", "pytest",
+                       "tools/pine_parity_fixtures/test_contract.py", "-q"],
+                      ["tools/pine_parity_fixtures"]),
     "controller": ([sys.executable, "-m", "pytest", "tools/test_agent_master.py", "-q"],
                    ["tools/agent_master.py", "tools/test_agent_master.py"]),
     "offline": ([sys.executable, "-m", "pytest", "tools/test_ea_readiness.py",

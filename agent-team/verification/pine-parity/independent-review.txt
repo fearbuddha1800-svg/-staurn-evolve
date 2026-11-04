@@ -1,0 +1,79 @@
+Independent read-only review b44fffbf
+UTC 2026-11-04T18:21:34.821462+00:00
+Base 83d1e1f
+controller: INTEGRITY SUCCESS; 2 source hashes and both output hashes checked at committed base.
+knowledge: INTEGRITY SUCCESS; 9 source hashes and both output hashes checked at committed base.
+Hashes establish byte integrity only; they do not authenticate execution or establish test correctness, native compilation, Pine/MQL execution, parity, profitability, or live readiness.
+
+Bounded proposal assessment (implementation pending):
+Acceptable as an offline synthetic oracle only, with explicit semantics and independently hand-calculated expected outputs. It cannot establish actual Pine/MQL parity.
+Required review criteria:
+- Closed bars: monotonically increasing timestamps, only finalized inputs; for the implemented close-versus-SMA(2) crossover, BUY uses current close > SMA and previous close <= SMA (inverse for SELL), with both current and previous averages defined.
+- Warmup: no signal until the SMA window and prior comparison are valid; no zero-filled or fabricated warmup values.
+- Missing bars: distinguish absent timestamps from explicit missing close values; declare skip/reset/propagation policy, never silently fabricate prices; expected rows must demonstrate the policy.
+- Session reset: reset both averaging history and previous comparison, and explicitly specify whether higher-timeframe visibility resets too; test an apparent boundary crossover suppressed by reset.
+- Confirmed HTF: specify bar open/close timestamps, same-close visibility boundary, interval alignment and session anchor. Visibility only after the full higher-timeframe interval closes, never from a future close. Require incomplete/missing constituent policy and a boundary test immediately before/at/after confirmation.
+- Independence: expected fixture values must not be calculated by the implementation being tested; compare all per-bar averages/signals/HTF visibility, including nonsignals and missing values.
+- Scope: neither a Python reference nor two mutually agreeing Python algorithms demonstrate actual Pine/MQL execution. Price-bar synthetic fixtures supply no tick/order-book evidence.
+Implementation subsequently reviewed after root readiness message; final verdict below supersedes provisional criteria.
+
+Independent command evidence UTC 2026-11-04T18:23:32.048693+00:00
+COMMAND ['python', '--version']
+EXIT 0
+STDOUT
+Python 3.11.2
+STDERR
+
+COMMAND ['ruff', '--version']
+EXIT 0
+STDOUT
+ruff 0.17.3
+STDERR
+
+COMMAND ['python', '-m', 'pytest', '--version']
+EXIT 0
+STDOUT
+pytest 9.2.0
+STDERR
+
+COMMAND ['python', '-m', 'pytest', 'tools/pine_parity_fixtures/test_contract.py', 'tools/test_verify_agent_work.py', '-q', '-p', 'no:cacheprovider']
+EXIT 0
+STDOUT
+....................                                                     [100%]
+20 passed in 0.05s
+STDERR
+
+COMMAND ['ruff', 'check', '--no-cache', 'tools/pine_parity_fixtures/contract.py', 'tools/pine_parity_fixtures/test_contract.py', 'tools/verify_agent_work.py']
+EXIT 0
+STDOUT
+All checks passed!
+STDERR
+
+SHA256 tools/pine_parity_fixtures/README.md 408adbf08ab819b3882505739d553fc81f25e9046bf4ec6b2af36342f29c4a63
+SHA256 tools/pine_parity_fixtures/cases.json 46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c
+SHA256 tools/pine_parity_fixtures/contract.py a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e
+SHA256 tools/pine_parity_fixtures/test_contract.py 022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa
+SHA256 tools/verify_agent_work.py 8ffaacf2637f0365714af5fb1f4c0b2bbaae6a5b83594f11386cf094225f2c74
+
+Independent adversarial probes UTC 2026-11-04T18:24:01.883461+00:00; Python -B inline script; exit 0
+Manual arithmetic crossovers: undefined,2,2,2; HOLD,HOLD,BUY,SELL.
+Missing-close, gap and session resets: null SMA/HOLD at reset; warmup HOLD; later BUY recovered.
+HTF cutoff at asof 179/180/181/240: new close 20 first visible exactly at 180, retained after.
+Per-decision prefix invariance: mutating every LTF/HTF close not yet confirmed at each decision changes no prior records, all 7 cases.
+Independent equality probes: equal previous close/SMA permits BUY or SELL when current side changes.
+
+FINAL VERDICT: ACCEPT for bounded synthetic offline fixture scope; no blocking correctness findings.
+Seven manually specified expected-record cases agree with independent arithmetic and documented behavior. The oracle is specifically close crossing SMA(2), not a fast/slow moving-average strategy. No existing Pine strategy equivalence is implied.
+Graph-first review: GitNexus 1.6.12 listed sole repository staurn-evolve at /code/Personal, commit 83d1e1f. Concept query returned no new fixture references. Status correctly reported stale content (new fixture sources plus verifier change); it is not evidence of new-module call coverage. context(run_check) showed main and verifier tests incoming, snapshot/digest outgoing, Main -> Digest process. Root supplied pre-edit UNKNOWN new-directory impact and LOW verifier impact. No source edit or graph rebuild performed by reviewer.
+Manual HTF reasoning: supplied HTF [-180,0) close 10 is visible for decisions 60/120; [0,180) close 20 first appears at decision 180 and persists at 240; [180,360) close 999 remains unavailable. Tests independently checked asof 179/180/181, plus per-decision future mutations.
+Sessions/gaps/null closes reset LTF SMA and crossover state as documented. HTF series is supplied independently, using UTC open+duration and last confirmed close; HTF aggregation from LTF constituents, exchange calendars/DST, HTF session expiry and runtime request.security settings are outside scope. No blocker from these declared simplifications.
+Optional regression strengthening: commit equality-side crossover examples (previous close exactly SMA), and a reset example whose first post-warmup comparison would signal if stale previous state survived. Current implementation passes independent equality probes; no present defect found.
+Verifier addition is an allowlisted fixed pytest invocation with the fixture directory included in source snapshot; no arbitrary command interface added. The existing snapshot extension filter omits README.md and verifier runner source itself; hashes cover Python/JSON fixture logic, not every semantic document or runner dependency. Keep evidence claims correspondingly narrow.
+Independent validation: 20 tests passed (15 fixture + 5 verifier), Ruff passed, independent boundary/equality/prefix-invariance probes passed. Commands, stdout/stderr, versions and source hashes are recorded above. Reviewer did not run native tools, Pine, brokers, live services, or access secrets. No source edits, descendants, loops, commits or pushes.
+Root-reported ea-entry stale AISignalsEngine.mqh evidence was outside this assigned controller/knowledge integrity audit; no independent ea-entry integrity or refreshed-check verdict is asserted here.
+Final reviewed source hashes UTC 2026-11-04T18:24:25.854400+00:00
+SHA256 tools/pine_parity_fixtures/README.md 408adbf08ab819b3882505739d553fc81f25e9046bf4ec6b2af36342f29c4a63
+SHA256 tools/pine_parity_fixtures/cases.json 46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c
+SHA256 tools/pine_parity_fixtures/contract.py a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e
+SHA256 tools/pine_parity_fixtures/test_contract.py 022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa
+SHA256 tools/verify_agent_work.py 8ffaacf2637f0365714af5fb1f4c0b2bbaae6a5b83594f11386cf094225f2c74

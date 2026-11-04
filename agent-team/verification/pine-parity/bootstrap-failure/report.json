@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "check": "pine-fixtures",
+  "command": [
+    "/home/cloudroom-agent/.local/bin/python",
+    "-m",
+    "pytest",
+    "tools/pine_parity_fixtures/test_contract.py",
+    "-q"
+  ],
+  "utc": "2026-11-04T18:22:58.962924+00:00",
+  "exit_code": 1,
+  "timed_out": false,
+  "sources_before": {
+    "tools/pine_parity_fixtures/cases.json": "7a3ed866b40d42f1d490aea68b41d83fdf7a3f8c78f1361fc2d2962a643ba86f",
+    "tools/pine_parity_fixtures/contract.py": "a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e",
+    "tools/pine_parity_fixtures/test_contract.py": "022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa"
+  },
+  "sources_after": {
+    "tools/pine_parity_fixtures/cases.json": "7a3ed866b40d42f1d490aea68b41d83fdf7a3f8c78f1361fc2d2962a643ba86f",
+    "tools/pine_parity_fixtures/contract.py": "a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e",
+    "tools/pine_parity_fixtures/test_contract.py": "022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa"
+  },
+  "passed": false,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "8c91605edc541c3cce3b6018bf87ab744851ffaaf4a02f34a48edb1c532d953e",
+  "trust": "local execution record; not cryptographic attestation"
+}

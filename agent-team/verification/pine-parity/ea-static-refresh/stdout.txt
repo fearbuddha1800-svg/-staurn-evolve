@@ -1,0 +1,12 @@
+{
+  "kind": "static_triage_only",
+  "results": [
+    {
+      "entry": "Hybrid_Microstructure_EA_V1.0.mq5",
+      "source_files": 5,
+      "status": "needs_metaeditor_compile",
+      "compiled": false,
+      "findings": []
+    }
+  ]
+}
