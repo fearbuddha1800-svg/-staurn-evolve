@@ -24,3 +24,15 @@ verification/pine-parity/. Fixture semantics: UTC closed bars, SMA(2) warmup,
 missing close/gap/session resets and supplied confirmed HTF visibility. No runtime
 implementation was changed. Next: obtain actual matched Pine/MQL outputs; do not
 repeat synthetic fixture work or treat Python compilation as MetaEditor output.
+
+Run 2026-11-05, base 00740c3: no ready canonical task. Mac unavailable; actual
+Pine/MQL exports and MetaEditor log still absent (existing blockers, not new).
+Independent review found a new provenance discrepancy: execution.json records
+verifier hash 8ffaacf..., while current tools/verify_agent_work.py is 0072b2e...;
+the recorded hash matches no committed verifier version. Four fixture hashes and
+acceptance artifact hashes match. Preserve historical evidence with this limit.
+Current verifier: 5 tests and Ruff pass; synthetic fixtures were not rerun.
+Actual ea-entry report hashes match its listed fail-closed include closure; the
+older narrative about AISignalsEngine.mqh does not describe that report scope.
+Evidence and exact root lease: verification/checkpoint-20261105/audit.json.
+Reviewer: cr_child_9b227ab080a47d66e7d67ba8. No runtime source changes or promotion.

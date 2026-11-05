@@ -114,6 +114,52 @@
     },
     "fixture_state": "done",
     "blocker": "Actual Pine and MQL runtime exports absent; synthetic fixture acceptance does not establish parity.",
-    "next_action": "Run matching Pine/MQL implementations against the seven-case contract and retain real export/compiler output."
+    "next_action": "Run matching Pine/MQL implementations against the seven-case contract and retain real export/compiler output.",
+    "evidence_integrity": {
+      "state": "qualified",
+      "note": "Fixture/report hashes match. execution.json verifier hash matches neither current source nor any committed verifier version; historical tool provenance unresolved. Current verifier tests pass separately; no parity promotion.",
+      "evidence": "agent-team/verification/checkpoint-20261105/audit.json"
+    },
+    "last_checkpoint": {
+      "utc": "2026-11-05T00:04:37.150798+00:00",
+      "base_revision": "00740c3097860325ab9f19f076b7480bf3b7fa15",
+      "state": "blocked",
+      "lease": {
+        "owner": "root:b44fffbf:20261105",
+        "task_id": "checkpoint-integrity-20261105",
+        "base_revision": "00740c3097860325ab9f19f076b7480bf3b7fa15",
+        "deadline_utc": "2026-11-05T00:20:00Z",
+        "exact_files": [
+          "agent-team/tasks.json",
+          "agent-team/STATUS.md",
+          "agent-team/WORKLIST.md",
+          "agent-team/LOOP_RUNTIME.md",
+          "agent-team/verification/checkpoint-20261105/audit.json",
+          "agent-team/verification/checkpoint-20261105/independent-review.txt",
+          "agent-team/verification/checkpoint-20261105/index.txt",
+          "agent-team/verification/checkpoint-20261105/impact-status.txt",
+          "agent-team/verification/checkpoint-20261105/impact-tasks.txt",
+          "agent-team/verification/checkpoint-20261105/impact-worklist.txt",
+          "agent-team/verification/checkpoint-20261105/impact-runtime.txt",
+          "agent-team/verification/checkpoint-20261105/verifier-tests.stdout.txt",
+          "agent-team/verification/checkpoint-20261105/verifier-tests.stderr.txt",
+          "agent-team/verification/checkpoint-20261105/graph-changes.txt"
+        ],
+        "existing_source_sha256": {
+          "agent-team/tasks.json": "612dc1da888df24eef6d452e82d08826ec9c79b7206219c85fc59dbe3b1fbda8",
+          "agent-team/STATUS.md": "930ae19d31abe8c9312b11e161158cd52c0caaa9986f617eba09f18321f663c2",
+          "agent-team/WORKLIST.md": "2623835e7f19e18d8d68348a38ad8e995e6cc71647839c3a973c00c2de72fa01",
+          "agent-team/LOOP_RUNTIME.md": "1a75699ae9821c99fd698ca75460d7875017a756f9771a70acc02a58f4bac153"
+        },
+        "acceptance_commands": [
+          "python -m pytest tools/test_verify_agent_work.py -q",
+          "ruff check tools/verify_agent_work.py tools/test_verify_agent_work.py",
+          "gitnexus detect-changes --scope all --repo .",
+          "independent read-only checkpoint review"
+        ],
+        "released": true
+      },
+      "reviewer": "cr_child_9b227ab080a47d66e7d67ba8"
+    }
   }
 ]

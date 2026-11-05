@@ -1,0 +1,181 @@
+Independent checkpoint review 2026-11-05; HEAD 00740c3097860325ab9f19f076b7480bf3b7fa15
+Read agent-team STATUS.md, WORKLIST.md, tasks.json; fixture README; committed execution/report records. No tests rerun.
+acceptance agent-team/verification/pine-parity/report.json: expected=e704744be66745668ca80f7de2da51d9929c7e952f69f48242ef5b30e994441c actual=e704744be66745668ca80f7de2da51d9929c7e952f69f48242ef5b30e994441c base00740c3=e704744be66745668ca80f7de2da51d9929c7e952f69f48242ef5b30e994441c verdict=MATCH
+acceptance agent-team/verification/pine-parity/execution.json: expected=529ec9e634c81b40f18ead597bffb753b98a2afc2cf6c6a5832bcd72a930e897 actual=529ec9e634c81b40f18ead597bffb753b98a2afc2cf6c6a5832bcd72a930e897 base00740c3=529ec9e634c81b40f18ead597bffb753b98a2afc2cf6c6a5832bcd72a930e897 verdict=MATCH
+Report agent-team/verification/controller/report.json: passed=True exit=0 command=['/home/cloudroom-agent/.local/share/quant-toolchain/venv/bin/python', '-m', 'pytest', 'tools/test_agent_master.py', '-q']
+sources_before tools/agent_master.py: expected=ba00b8078dcca9285b00d059f7d0e2a11b7009cdc35c7a604918edcfa696e036 actual=ba00b8078dcca9285b00d059f7d0e2a11b7009cdc35c7a604918edcfa696e036 base00740c3=ba00b8078dcca9285b00d059f7d0e2a11b7009cdc35c7a604918edcfa696e036 verdict=MATCH
+sources_before tools/test_agent_master.py: expected=560cbdba0ae4a5a6b91cb46863738526325077d8108898ecbe6af2b00aeafa44 actual=560cbdba0ae4a5a6b91cb46863738526325077d8108898ecbe6af2b00aeafa44 base00740c3=560cbdba0ae4a5a6b91cb46863738526325077d8108898ecbe6af2b00aeafa44 verdict=MATCH
+sources_after tools/agent_master.py: expected=ba00b8078dcca9285b00d059f7d0e2a11b7009cdc35c7a604918edcfa696e036 actual=ba00b8078dcca9285b00d059f7d0e2a11b7009cdc35c7a604918edcfa696e036 base00740c3=ba00b8078dcca9285b00d059f7d0e2a11b7009cdc35c7a604918edcfa696e036 verdict=MATCH
+sources_after tools/test_agent_master.py: expected=560cbdba0ae4a5a6b91cb46863738526325077d8108898ecbe6af2b00aeafa44 actual=560cbdba0ae4a5a6b91cb46863738526325077d8108898ecbe6af2b00aeafa44 base00740c3=560cbdba0ae4a5a6b91cb46863738526325077d8108898ecbe6af2b00aeafa44 verdict=MATCH
+retained output agent-team/verification/controller/stdout.txt: expected=79e4ba00e63fc08d8d512c2fa4b1016cef741ad8e43a8c7970419d5fd5578dff actual=79e4ba00e63fc08d8d512c2fa4b1016cef741ad8e43a8c7970419d5fd5578dff base00740c3=79e4ba00e63fc08d8d512c2fa4b1016cef741ad8e43a8c7970419d5fd5578dff verdict=MATCH
+retained output agent-team/verification/controller/stderr.txt: expected=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 actual=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 base00740c3=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 verdict=MATCH
+Report agent-team/verification/ea-entry/report.json: passed=True exit=0 command=['/home/cloudroom-agent/.local/share/quant-toolchain/venv/bin/python', 'tools/ea_readiness.py', 'Hybrid_Microstructure_EA_V1.0.mq5']
+sources_before Hybrid_Microstructure_EA_V1.0.mq5: expected=70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f actual=70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f base00740c3=70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f verdict=MATCH
+sources_before HybridMicrostructure/ParamUX.mqh: expected=ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06 actual=ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06 base00740c3=ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06 verdict=MATCH
+sources_before HybridMicrostructure/AIBridge.mqh: expected=3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843 actual=3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843 base00740c3=3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843 verdict=MATCH
+sources_before HybridMicrostructure/AIBridgeUX.mqh: expected=538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a actual=538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a base00740c3=538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a verdict=MATCH
+sources_before HybridMicrostructure/AISignalsEngineFailClosed.mqh: expected=0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169 actual=0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169 base00740c3=0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169 verdict=MATCH
+sources_after Hybrid_Microstructure_EA_V1.0.mq5: expected=70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f actual=70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f base00740c3=70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f verdict=MATCH
+sources_after HybridMicrostructure/ParamUX.mqh: expected=ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06 actual=ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06 base00740c3=ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06 verdict=MATCH
+sources_after HybridMicrostructure/AIBridge.mqh: expected=3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843 actual=3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843 base00740c3=3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843 verdict=MATCH
+sources_after HybridMicrostructure/AIBridgeUX.mqh: expected=538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a actual=538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a base00740c3=538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a verdict=MATCH
+sources_after HybridMicrostructure/AISignalsEngineFailClosed.mqh: expected=0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169 actual=0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169 base00740c3=0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169 verdict=MATCH
+retained output agent-team/verification/ea-entry/stdout.txt: expected=b4dbe985a9c80ff64e08ee8e90b2cfc961b7491fb08904dcda6b6ffabb53044c actual=b4dbe985a9c80ff64e08ee8e90b2cfc961b7491fb08904dcda6b6ffabb53044c base00740c3=b4dbe985a9c80ff64e08ee8e90b2cfc961b7491fb08904dcda6b6ffabb53044c verdict=MATCH
+retained output agent-team/verification/ea-entry/stderr.txt: expected=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 actual=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 base00740c3=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 verdict=MATCH
+Report agent-team/verification/knowledge/report.json: passed=True exit=0 command=['/home/cloudroom-agent/.local/share/quant-toolchain/venv/bin/python', '-m', 'pytest', 'tools/test_ea_readiness.py', 'mql5-training/offline_tests', '-q']
+sources_before tools/ea_readiness.py: expected=c5b3caf28812342297a1d439d52be9cf4850b4fdc4381f0d429e15fa2fea15a7 actual=c5b3caf28812342297a1d439d52be9cf4850b4fdc4381f0d429e15fa2fea15a7 base00740c3=c5b3caf28812342297a1d439d52be9cf4850b4fdc4381f0d429e15fa2fea15a7 verdict=MATCH
+sources_before tools/test_ea_readiness.py: expected=17e72626e239c2a52d78504e8192f960cc19ca8ac65a959be8a44ba9711cc6f9 actual=17e72626e239c2a52d78504e8192f960cc19ca8ac65a959be8a44ba9711cc6f9 base00740c3=17e72626e239c2a52d78504e8192f960cc19ca8ac65a959be8a44ba9711cc6f9 verdict=MATCH
+sources_before mql5-training/offline_pipeline.py: expected=4bb3b7b149dca52b5e25afc025720da99bddb757757ba406b41c4d185b507b6c actual=4bb3b7b149dca52b5e25afc025720da99bddb757757ba406b41c4d185b507b6c base00740c3=4bb3b7b149dca52b5e25afc025720da99bddb757757ba406b41c4d185b507b6c verdict=MATCH
+sources_before mql5-training/offline_tests/test_pipeline.py: expected=ee66d1e1a7d8260f7cd017e53bc0e89b767c0e0dd17a705316f0b4c37c30a554 actual=ee66d1e1a7d8260f7cd017e53bc0e89b767c0e0dd17a705316f0b4c37c30a554 base00740c3=ee66d1e1a7d8260f7cd017e53bc0e89b767c0e0dd17a705316f0b4c37c30a554 verdict=MATCH
+sources_before mql5-training/source_manifest.json: expected=aaba8ea5a7efce7d2724aa4ed96241b1eaaf6ef46d2965b7cf881390deff50a0 actual=aaba8ea5a7efce7d2724aa4ed96241b1eaaf6ef46d2965b7cf881390deff50a0 base00740c3=aaba8ea5a7efce7d2724aa4ed96241b1eaaf6ef46d2965b7cf881390deff50a0 verdict=MATCH
+sources_before mql5-training/curated/copybuffer.txt: expected=b0166fa08fe3c17c0966dc00afb989b7dea8433170337dd19ab5b718ce315757 actual=b0166fa08fe3c17c0966dc00afb989b7dea8433170337dd19ab5b718ce315757 base00740c3=b0166fa08fe3c17c0966dc00afb989b7dea8433170337dd19ab5b718ce315757 verdict=MATCH
+sources_before mql5-training/curated/ima.txt: expected=c79a7dad6a3c7b21a1e5122a593e0b9c3a10198e011ce7bed18b1de96edb9275 actual=c79a7dad6a3c7b21a1e5122a593e0b9c3a10198e011ce7bed18b1de96edb9275 base00740c3=c79a7dad6a3c7b21a1e5122a593e0b9c3a10198e011ce7bed18b1de96edb9275 verdict=MATCH
+sources_before mql5-training/curated/indicatorrelease.txt: expected=f4498227c6c75bcd4da3b25195d35dc94fbdc3f9b979cca9254029fc801724ad actual=f4498227c6c75bcd4da3b25195d35dc94fbdc3f9b979cca9254029fc801724ad base00740c3=f4498227c6c75bcd4da3b25195d35dc94fbdc3f9b979cca9254029fc801724ad verdict=MATCH
+sources_before mql5-training/curated/oninit.txt: expected=5bd2a500c99585d695ee7a09378d686ed2814c1bdc2fe9698a98285aa0b29901 actual=5bd2a500c99585d695ee7a09378d686ed2814c1bdc2fe9698a98285aa0b29901 base00740c3=5bd2a500c99585d695ee7a09378d686ed2814c1bdc2fe9698a98285aa0b29901 verdict=MATCH
+sources_after tools/ea_readiness.py: expected=c5b3caf28812342297a1d439d52be9cf4850b4fdc4381f0d429e15fa2fea15a7 actual=c5b3caf28812342297a1d439d52be9cf4850b4fdc4381f0d429e15fa2fea15a7 base00740c3=c5b3caf28812342297a1d439d52be9cf4850b4fdc4381f0d429e15fa2fea15a7 verdict=MATCH
+sources_after tools/test_ea_readiness.py: expected=17e72626e239c2a52d78504e8192f960cc19ca8ac65a959be8a44ba9711cc6f9 actual=17e72626e239c2a52d78504e8192f960cc19ca8ac65a959be8a44ba9711cc6f9 base00740c3=17e72626e239c2a52d78504e8192f960cc19ca8ac65a959be8a44ba9711cc6f9 verdict=MATCH
+sources_after mql5-training/offline_pipeline.py: expected=4bb3b7b149dca52b5e25afc025720da99bddb757757ba406b41c4d185b507b6c actual=4bb3b7b149dca52b5e25afc025720da99bddb757757ba406b41c4d185b507b6c base00740c3=4bb3b7b149dca52b5e25afc025720da99bddb757757ba406b41c4d185b507b6c verdict=MATCH
+sources_after mql5-training/offline_tests/test_pipeline.py: expected=ee66d1e1a7d8260f7cd017e53bc0e89b767c0e0dd17a705316f0b4c37c30a554 actual=ee66d1e1a7d8260f7cd017e53bc0e89b767c0e0dd17a705316f0b4c37c30a554 base00740c3=ee66d1e1a7d8260f7cd017e53bc0e89b767c0e0dd17a705316f0b4c37c30a554 verdict=MATCH
+sources_after mql5-training/source_manifest.json: expected=aaba8ea5a7efce7d2724aa4ed96241b1eaaf6ef46d2965b7cf881390deff50a0 actual=aaba8ea5a7efce7d2724aa4ed96241b1eaaf6ef46d2965b7cf881390deff50a0 base00740c3=aaba8ea5a7efce7d2724aa4ed96241b1eaaf6ef46d2965b7cf881390deff50a0 verdict=MATCH
+sources_after mql5-training/curated/copybuffer.txt: expected=b0166fa08fe3c17c0966dc00afb989b7dea8433170337dd19ab5b718ce315757 actual=b0166fa08fe3c17c0966dc00afb989b7dea8433170337dd19ab5b718ce315757 base00740c3=b0166fa08fe3c17c0966dc00afb989b7dea8433170337dd19ab5b718ce315757 verdict=MATCH
+sources_after mql5-training/curated/ima.txt: expected=c79a7dad6a3c7b21a1e5122a593e0b9c3a10198e011ce7bed18b1de96edb9275 actual=c79a7dad6a3c7b21a1e5122a593e0b9c3a10198e011ce7bed18b1de96edb9275 base00740c3=c79a7dad6a3c7b21a1e5122a593e0b9c3a10198e011ce7bed18b1de96edb9275 verdict=MATCH
+sources_after mql5-training/curated/indicatorrelease.txt: expected=f4498227c6c75bcd4da3b25195d35dc94fbdc3f9b979cca9254029fc801724ad actual=f4498227c6c75bcd4da3b25195d35dc94fbdc3f9b979cca9254029fc801724ad base00740c3=f4498227c6c75bcd4da3b25195d35dc94fbdc3f9b979cca9254029fc801724ad verdict=MATCH
+sources_after mql5-training/curated/oninit.txt: expected=5bd2a500c99585d695ee7a09378d686ed2814c1bdc2fe9698a98285aa0b29901 actual=5bd2a500c99585d695ee7a09378d686ed2814c1bdc2fe9698a98285aa0b29901 base00740c3=5bd2a500c99585d695ee7a09378d686ed2814c1bdc2fe9698a98285aa0b29901 verdict=MATCH
+retained output agent-team/verification/knowledge/stdout.txt: expected=2517e9eae50646d7bbe12680a6b4bab62b845ea0743476059c8b765356d3b1f7 actual=2517e9eae50646d7bbe12680a6b4bab62b845ea0743476059c8b765356d3b1f7 base00740c3=2517e9eae50646d7bbe12680a6b4bab62b845ea0743476059c8b765356d3b1f7 verdict=MATCH
+retained output agent-team/verification/knowledge/stderr.txt: expected=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 actual=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 base00740c3=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 verdict=MATCH
+Report agent-team/verification/pine-parity/bootstrap-failure/report.json: passed=False exit=1 command=['/home/cloudroom-agent/.local/bin/python', '-m', 'pytest', 'tools/pine_parity_fixtures/test_contract.py', '-q']
+sources_before tools/pine_parity_fixtures/cases.json: expected=7a3ed866b40d42f1d490aea68b41d83fdf7a3f8c78f1361fc2d2962a643ba86f actual=46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c base00740c3=46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c verdict=MISMATCH
+sources_before tools/pine_parity_fixtures/contract.py: expected=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e actual=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e base00740c3=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e verdict=MATCH
+sources_before tools/pine_parity_fixtures/test_contract.py: expected=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa actual=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa base00740c3=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa verdict=MATCH
+sources_after tools/pine_parity_fixtures/cases.json: expected=7a3ed866b40d42f1d490aea68b41d83fdf7a3f8c78f1361fc2d2962a643ba86f actual=46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c base00740c3=46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c verdict=MISMATCH
+sources_after tools/pine_parity_fixtures/contract.py: expected=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e actual=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e base00740c3=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e verdict=MATCH
+sources_after tools/pine_parity_fixtures/test_contract.py: expected=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa actual=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa base00740c3=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa verdict=MATCH
+retained output agent-team/verification/pine-parity/bootstrap-failure/stdout.txt: expected=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 actual=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 base00740c3=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 verdict=MATCH
+retained output agent-team/verification/pine-parity/bootstrap-failure/stderr.txt: expected=8c91605edc541c3cce3b6018bf87ab744851ffaaf4a02f34a48edb1c532d953e actual=8c91605edc541c3cce3b6018bf87ab744851ffaaf4a02f34a48edb1c532d953e base00740c3=8c91605edc541c3cce3b6018bf87ab744851ffaaf4a02f34a48edb1c532d953e verdict=MATCH
+Report agent-team/verification/pine-parity/ea-static-refresh/report.json: passed=True exit=0 command=['/tmp/mt5-python/bin/python', 'tools/ea_readiness.py', 'Hybrid_Microstructure_EA_V1.0.mq5']
+sources_before Hybrid_Microstructure_EA_V1.0.mq5: expected=70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f actual=70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f base00740c3=70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f verdict=MATCH
+sources_before HybridMicrostructure/AIBridge.mqh: expected=3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843 actual=3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843 base00740c3=3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843 verdict=MATCH
+sources_before HybridMicrostructure/AIBridgeUX.mqh: expected=538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a actual=538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a base00740c3=538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a verdict=MATCH
+sources_before HybridMicrostructure/AISignalsEngineFailClosed.mqh: expected=0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169 actual=0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169 base00740c3=0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169 verdict=MATCH
+sources_before HybridMicrostructure/ParamUX.mqh: expected=ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06 actual=ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06 base00740c3=ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06 verdict=MATCH
+sources_after Hybrid_Microstructure_EA_V1.0.mq5: expected=70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f actual=70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f base00740c3=70742a0de810cc4afa38802212874d84f203a153abe8a7b16435a9a09200223f verdict=MATCH
+sources_after HybridMicrostructure/AIBridge.mqh: expected=3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843 actual=3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843 base00740c3=3eec112f5a0aeebf7fb4979679c6b2aab49db1b72522b134da52e6ae73bc9843 verdict=MATCH
+sources_after HybridMicrostructure/AIBridgeUX.mqh: expected=538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a actual=538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a base00740c3=538fab5aba2c9b1a91354fd92ac0cca1902221f28425565ccaf03b072a0bb44a verdict=MATCH
+sources_after HybridMicrostructure/AISignalsEngineFailClosed.mqh: expected=0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169 actual=0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169 base00740c3=0c0bf8ea6777ac51313783b3f941c9ecf49cb6f244cca600a3422a1c0057e169 verdict=MATCH
+sources_after HybridMicrostructure/ParamUX.mqh: expected=ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06 actual=ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06 base00740c3=ed1fb832b8528f66e6b4c58502c7d9ffe9e81b86f0ca1b96062e4b343306fd06 verdict=MATCH
+retained output agent-team/verification/pine-parity/ea-static-refresh/stdout.txt: expected=b4dbe985a9c80ff64e08ee8e90b2cfc961b7491fb08904dcda6b6ffabb53044c actual=b4dbe985a9c80ff64e08ee8e90b2cfc961b7491fb08904dcda6b6ffabb53044c base00740c3=b4dbe985a9c80ff64e08ee8e90b2cfc961b7491fb08904dcda6b6ffabb53044c verdict=MATCH
+retained output agent-team/verification/pine-parity/ea-static-refresh/stderr.txt: expected=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 actual=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 base00740c3=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 verdict=MATCH
+Report agent-team/verification/pine-parity/report.json: passed=True exit=0 command=['/tmp/mt5-python/bin/python', '-m', 'pytest', 'tools/pine_parity_fixtures/test_contract.py', '-q']
+sources_before tools/pine_parity_fixtures/cases.json: expected=46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c actual=46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c base00740c3=46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c verdict=MATCH
+sources_before tools/pine_parity_fixtures/contract.py: expected=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e actual=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e base00740c3=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e verdict=MATCH
+sources_before tools/pine_parity_fixtures/test_contract.py: expected=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa actual=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa base00740c3=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa verdict=MATCH
+sources_after tools/pine_parity_fixtures/cases.json: expected=46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c actual=46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c base00740c3=46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c verdict=MATCH
+sources_after tools/pine_parity_fixtures/contract.py: expected=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e actual=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e base00740c3=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e verdict=MATCH
+sources_after tools/pine_parity_fixtures/test_contract.py: expected=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa actual=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa base00740c3=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa verdict=MATCH
+retained output agent-team/verification/pine-parity/stdout.txt: expected=beb56dc96bf547b3e3ebc73df3fb27259e122e5c71b40fff49a38dd9692fcd8a actual=beb56dc96bf547b3e3ebc73df3fb27259e122e5c71b40fff49a38dd9692fcd8a base00740c3=beb56dc96bf547b3e3ebc73df3fb27259e122e5c71b40fff49a38dd9692fcd8a verdict=MATCH
+retained output agent-team/verification/pine-parity/stderr.txt: expected=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 actual=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 base00740c3=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 verdict=MATCH
+execution source tools/pine_parity_fixtures/README.md: expected=408adbf08ab819b3882505739d553fc81f25e9046bf4ec6b2af36342f29c4a63 actual=408adbf08ab819b3882505739d553fc81f25e9046bf4ec6b2af36342f29c4a63 base00740c3=408adbf08ab819b3882505739d553fc81f25e9046bf4ec6b2af36342f29c4a63 verdict=MATCH
+execution source tools/pine_parity_fixtures/contract.py: expected=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e actual=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e base00740c3=a8155fad97f61cf2606146ffacb83156045627623f2aab18650f29141f5ef89e verdict=MATCH
+execution source tools/pine_parity_fixtures/test_contract.py: expected=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa actual=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa base00740c3=022b965fca2f5e89d360403ddb8d53fbdaf997ef245352cb6dc038162838d6aa verdict=MATCH
+execution source tools/pine_parity_fixtures/cases.json: expected=46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c actual=46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c base00740c3=46230398e54e1a8e8c57555a6d1d0a1b05ec548eaffc28d29785bb679013fd1c verdict=MATCH
+execution source tools/verify_agent_work.py: expected=8ffaacf2637f0365714af5fb1f4c0b2bbaae6a5b83594f11386cf094225f2c74 actual=0072b2ea7d3ced6fd0354a14689526b8f4ebf1c453dbac05b1773737f3428e4d base00740c3=0072b2ea7d3ced6fd0354a14689526b8f4ebf1c453dbac05b1773737f3428e4d verdict=MISMATCH
+Historical recorded commands: [{"command": ["python", "-m", "pytest", "tools/pine_parity_fixtures/test_contract.py", "tools/test_verify_agent_work.py", "-q"], "exit_code": 0, "stdout_sha256": "fc4bdbc306a5cd8229bd86fe73dad4927cb19b1f79f8884e3c7fff5dcb539bcc", "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}, {"command": ["ruff", "check", "tools/pine_parity_fixtures", "tools/verify_agent_work.py"], "exit_code": 0, "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18", "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}, {"command": ["python", "-m", "compileall", "-q", "tools/pine_parity_fixtures", "tools/verify_agent_work.py"], "exit_code": 0, "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}]
+Verifier git history:
+9d2ae04458977d0aacb9146245fe137641c34bf6 test: add bounded offline Pine parity contract fixtures
+6ac87d016bc52d3ca2a15f87a72f095ab339b460 fix: limit EA evidence to committed include dependencies
+9a350892b4670238e7b0de90f7f3c100c4ad5c31 feat: add reviewed engineering agent team and fail-closed EA repairs
+
+Verifier git 83d1e1f SHA256 d41eed85974de9e45b16d4cda5d00f9306645831760c50561db96fa889783597
+Verifier git 00740c3 SHA256 0072b2ea7d3ced6fd0354a14689526b8f4ebf1c453dbac05b1773737f3428e4d
+Verifier diff since execution base:
+diff --git a/tools/verify_agent_work.py b/tools/verify_agent_work.py
+index cf43ac9..035a50a 100644
+--- a/tools/verify_agent_work.py
++++ b/tools/verify_agent_work.py
+@@ -13,6 +13,9 @@ from pathlib import Path
+
+ ROOT = Path(__file__).resolve().parents[1]
+ CHECKS = {
++    "pine-fixtures": ([sys.executable, "-m", "pytest",
++                       "tools/pine_parity_fixtures/test_contract.py", "-q"],
++                      ["tools/pine_parity_fixtures"]),
+     "controller": ([sys.executable, "-m", "pytest", "tools/test_agent_master.py", "-q"],
+                    ["tools/agent_master.py", "tools/test_agent_master.py"]),
+     "offline": ([sys.executable, "-m", "pytest", "tools/test_ea_readiness.py",
+@@ -25,7 +28,10 @@ CHECKS = {
+                    "HybridMicrostructure"]),
+     "ea-entry": ([sys.executable, "tools/ea_readiness.py",
+                   "Hybrid_Microstructure_EA_V1.0.mq5"],
+-                 ["Hybrid_Microstructure_EA_V1.0.mq5", "HybridMicrostructure"]),
++                 ["Hybrid_Microstructure_EA_V1.0.mq5",
++                  "HybridMicrostructure/ParamUX.mqh", "HybridMicrostructure/AIBridge.mqh",
++                  "HybridMicrostructure/AIBridgeUX.mqh",
++                  "HybridMicrostructure/AISignalsEngineFailClosed.mqh"]),
+ }
+
+
+
+Tracked evidence inventory:
+agent-team/verification/controller/report.json
+agent-team/verification/controller/stderr.txt
+agent-team/verification/controller/stdout.txt
+agent-team/verification/ea-entry/report.json
+agent-team/verification/ea-entry/stderr.txt
+agent-team/verification/ea-entry/stdout.txt
+agent-team/verification/knowledge/report.json
+agent-team/verification/knowledge/stderr.txt
+agent-team/verification/knowledge/stdout.txt
+agent-team/verification/pine-parity/bootstrap-failure/report.json
+agent-team/verification/pine-parity/bootstrap-failure/stderr.txt
+agent-team/verification/pine-parity/bootstrap-failure/stdout.txt
+agent-team/verification/pine-parity/check-0.stderr.txt
+agent-team/verification/pine-parity/check-0.stdout.txt
+agent-team/verification/pine-parity/check-1.stderr.txt
+agent-team/verification/pine-parity/check-1.stdout.txt
+agent-team/verification/pine-parity/check-2.stderr.txt
+agent-team/verification/pine-parity/check-2.stdout.txt
+agent-team/verification/pine-parity/ea-static-refresh/report.json
+agent-team/verification/pine-parity/ea-static-refresh/stderr.txt
+agent-team/verification/pine-parity/ea-static-refresh/stdout.txt
+agent-team/verification/pine-parity/execution.json
+agent-team/verification/pine-parity/graph-changes.txt
+agent-team/verification/pine-parity/impact-checks.txt
+agent-team/verification/pine-parity/impact-fixtures.txt
+agent-team/verification/pine-parity/impact-verifier.txt
+agent-team/verification/pine-parity/independent-review.txt
+agent-team/verification/pine-parity/report.json
+agent-team/verification/pine-parity/stderr.txt
+agent-team/verification/pine-parity/stdout.txt
+
+PATH native tools: {'metaeditor': None, 'metaeditor64': None, 'MetaEditor.exe': None, 'MetaEditor64.exe': None, 'wine': None, 'wine64': None, 'terminal64': None}
+Native filename scan (above six roots; skips .git,node_modules,.cache,.rustup,.npm): []
+Canonical compile.log exists: False
+VERDICT: pine-parity BLOCKED (matching actual Pine/MQL exports absent); native-compile BLOCKED (actual native compiler log/execution absent). Static triage and Python compileall cannot satisfy native compilation.
+INTEGRITY: acceptance hashes for report.json/execution.json and fixture source hashes must be distinguished from verifier hash integrity. execution.json verifier SHA is stale/mismatched; therefore do not assert all source/tool hashes match or that retained execution proves the current verifier. Matching fixture and output hashes support the bounded historical synthetic result only; local records are not cryptographic attestations. No repair or rerun performed.
+READY: controller/knowledge have bounded completed offline checks; ea-entry only static acceptance. No outstanding canonical task is ready for completion in this environment; native-compile and pine-parity require missing external evidence. Synthetic fixture scope is done and must not be repeated. No live readiness established.
+Narrative discrepancy: STATUS/execution mention stale AISignalsEngine.mqh, whereas committed ea-entry report lists AISignalsEngineFailClosed.mqh. Actual hashes audited above take precedence.
+Final git status: clean
+Only owned /tmp report written; no tracked edits, descendants, loops, APIs, tests, commits or push. RTK and python absent; shell rtk passthrough and available python3 used for hashlib review.
+
+Verifier hash at every path-changing commit reachable from base:
+9d2ae04458977d0aacb9146245fe137641c34bf6 0072b2ea7d3ced6fd0354a14689526b8f4ebf1c453dbac05b1773737f3428e4d
+6ac87d016bc52d3ca2a15f87a72f095ab339b460 35b74dd690719b15f54b768c009116a1be8ab2676fb020c76e5ec08569b9bee0
+9a350892b4670238e7b0de90f7f3c100c4ad5c31 d41eed85974de9e45b16d4cda5d00f9306645831760c50561db96fa889783597
+Recorded execution verifier hash 8ffaacf... matches none of those committed verifier versions. Its provenance cannot be established from this history; do not characterize it as a verified historical committed tool version.
+Additional mismatch qualification: cases.json mismatch occurs only in preserved bootstrap-failure/report.json (failed historical run); current successful pine-parity/report.json and execution.json fixture hashes match.
+
+Checkpoint diff final review:
+Audit/task lease identical: PASS
+Base lease hash agent-team/tasks.json: PASS
+Base lease hash agent-team/STATUS.md: PASS
+Base lease hash agent-team/WORKLIST.md: PASS
+Base lease hash agent-team/LOOP_RUNTIME.md: PASS
+Current verifier hash: PASS
+Current verifier test hash: PASS
+Fresh retained test stdout: PASS
+Fresh retained test stderr: PASS
+Native log absence: PASS
+FINAL CHECKPOINT VERDICT: ACCEPT bounded metadata checkpoint. Claims about fixture/source hash integrity, unresolved historical verifier provenance, unchanged native/parity blockers, and no outstanding canonical task ready agree with independent audit. Fresh verifier tests are separately retained and do not repair historical evidence. Mac connection and tool-bootstrap chronology are root-reported, not independently attested by this reviewer. No runtime acceptance or promotion.
+Lease released=false is expected in-progress state per user; root must set released=true consistently in tasks.json and audit.json before commit. Acceptance does not attest that future finalization already occurred.
+Read-only review: no new tests, loops, descendants, tracked edits or repair. Only this owned /tmp report appended.
+Pre-commit qualification: graph-changes.txt is not yet present at review time. ACCEPT applies to checkpoint content; commit readiness remains conditional on retaining and reviewing required complete graph-change analysis (no partial/truncated result), plus releasing the lease. This review does not waive that project requirement.

@@ -1,0 +1,11 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 14 files, 4 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Section Scheduled engineering lead → agent-team/LOOP_RUNTIME.md
+  Section Canonical engineering checkpoint → agent-team/STATUS.md
+  Section Cross-run worklist → agent-team/WORKLIST.md
+  Section Research handoff → agent-team/WORKLIST.md

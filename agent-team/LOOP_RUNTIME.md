@@ -49,3 +49,14 @@ this sandbox, not guaranteed in the next run. Seven synthetic parity fixtures
 and the allowlisted verifier check passed; actual runtime parity remains blocked.
 Retained the initial failed Python launcher check, fixed by invoking the original
 virtualenv executable. No new loops, external messages or live-service tests.
+
+2026-11-05 run: fetched engineering tip 00740c3 and merged fast-forward in a clean
+checkout, then created a private run branch. Initial child list empty; one
+read-only reviewer completed. No ready canonical task; runtime prerequisites
+remain absent. Checkpointed newly discovered verifier provenance discrepancy,
+without rewriting previous evidence. Current verifier tests (5) and Ruff passed.
+Bootstrapped isolated Node 22.23.0/GitNexus 1.6.12 and Python 3.11.2/pytest
+9.2.0/Ruff 0.17.3; RTK unavailable, shell passthrough used. Graph indexing needed
+a 768MiB buffer after the default failed. No runtime source edits, new loops,
+external messages, synthetic fixture reruns, native compile or trading.
+Exact lease and review: verification/checkpoint-20261105/audit.json.

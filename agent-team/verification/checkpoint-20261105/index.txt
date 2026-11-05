@@ -1,0 +1,27 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  GitNexus Analyzer (1.6.12)
+[2K
+index schema changed (built by an unidentified GitNexus build, this build is 60fc01e4e4ed); forcing a full re-analyze so the database is recreated from the current schema.
+[2K
+analysis capabilities changed (missing:graph.class-framework-annotations); forcing a full rebuild so persisted feature evidence is complete.
+[2K
+analyzer runner identity changed (stamped schema missing, this build uses schema 4); forcing a full rebuild so the index provenance matches the analyzer and dependency/native runtime that produced it.
+[2K
+  Skipped 3 large files (>512KB, likely generated/vendored)
+[2K
+  - cockpit_assets/vela-pinets.global.js
+[2K
+  - cockpit_assets/vela.global.js
+[2K
+  - signals.db-wal
+[2K
+  Set GITNEXUS_MAX_FILE_SIZE=<KB> to include files above the default cap.
+{"level":40,"time":1793836997655,"name":"gitnexus","msg":"[scope-resolution] 177 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: context (javascript), p (javascript), session (javascript), timezone (javascript), condition (python), data (python), detail (python), entry (python), files (python), high (python), …"}
+{"level":40,"time":1793836997794,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":383,"entryPointsUnexplored":0,"walksCutByBudget":36,"tracesDepthCapped":0,"calleesDropped":1362,"processesDropped":0},"msg":"[processes] 526 flows reported, but whole flows are MISSING: 383 of 583 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 0 trace(s) cut at maxTraceDepth, 1362 callee(s) skipped at maxBranching, 36 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+
+  Repository indexed successfully (28.3s)
+
+  6,542 nodes | 13,347 edges | 267 clusters | 526 flows
+  /code/Personal

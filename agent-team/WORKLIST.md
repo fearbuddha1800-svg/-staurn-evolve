@@ -14,3 +14,9 @@ new strategy/UI/model work. The scan covers 12 public listings and six engineeri
 references; it does not establish competitor runtime behavior or profitability.
 Preserve the current Pine-parity/native-compile gates. The rendered design is an
 offline proposal, not a connected replacement for the existing dashboard.
+
+2026-11-05 checkpoint: runtime blockers unchanged. Before relying on historical
+Pine execution tool provenance, resolve execution.json verifier hash mismatch
+against all committed verifier versions. Current verifier unit tests pass; this
+does not repair historical provenance or establish runtime parity. Evidence:
+verification/checkpoint-20261105/. Do not repeat the synthetic fixture scope.

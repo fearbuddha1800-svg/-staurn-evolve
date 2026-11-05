@@ -1,0 +1,11 @@
+
+  GitNexus Impact (1.6.12)
+{
+  "error": "Target 'agent-team/tasks.json' not found",
+  "target": {
+    "name": "agent-team/tasks.json"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}
